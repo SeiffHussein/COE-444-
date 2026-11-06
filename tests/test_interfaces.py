@@ -218,3 +218,55 @@ def test_sample_pipeline_end_to_end(tmp_path):
     # Severity order: first finding is the most serious.
     scores = [schemas.SEVERITY_SCORES[f["severity"]] for f in findings]
     assert scores == sorted(scores, reverse=True)
+
+
+# ---------------------------------------------------------------- Member 2 tests
+import json as _json
+from types import SimpleNamespace as _NS
+
+
+def test_parse_nuclei_jsonl_flattens_info():
+    from modules import vulnerability_scanner as vs
+    line = _json.dumps({
+        "template-id": "git-config",
+        "info": {"name": "Git Config Exposure", "severity": "medium", "description": "Exposed .git/config"},
+        "matched-at": "http://lab.local/.git/config",
+    })
+    rows = vs._parse_nuclei_jsonl(line + "\nnot json\n\n")
+    findings = vs.normalize_findings(rows, "lab.local", "nuclei")
+    assert len(findings) == 1
+    assert findings[0]["title"] == "Git Config Exposure"
+    assert findings[0]["severity"] == "Medium"
+    assert findings[0]["source"] == "nuclei"
+    assert "git/config" in findings[0]["evidence"]
+
+
+def test_parse_nikto_json_dict_and_list():
+    from modules import vulnerability_scanner as vs
+    host = {"host": "lab.local", "vulnerabilities": [
+        {"id": "1", "method": "GET", "url": "/admin/", "msg": "Admin login page found"},
+        {"id": "2", "method": "GET", "url": "/", "msg": "Server banner has changed"},
+    ]}
+    for payload in (host, [host]):
+        rows = vs._parse_nikto_json(_json.dumps(payload))
+        findings = vs.normalize_findings(rows, "lab.local", "nikto")
+        assert [f["severity"] for f in findings] == ["Medium", "Low"]
+
+
+def test_scan_one_tool_missing_adds_info_finding(monkeypatch):
+    from modules import vulnerability_scanner as vs
+    monkeypatch.setattr(vs, "tool_available", lambda name: name == "nuclei")
+    line = _json.dumps({"template-id": "x", "info": {"name": "Test Finding", "severity": "high"}})
+    monkeypatch.setattr(vs, "run_tool", lambda args: _NS(returncode=0, stdout=line, stderr=""))
+    findings = vs.scan_vulnerabilities("127.0.0.1")
+    titles = [f["title"] for f in findings]
+    assert "Test Finding" in titles
+    assert "Nikto check skipped" in titles
+
+
+def test_scan_both_tools_missing_raises(monkeypatch):
+    import pytest
+    from modules import vulnerability_scanner as vs
+    monkeypatch.setattr(vs, "tool_available", lambda name: False)
+    with pytest.raises(RuntimeError):
+        vs.scan_vulnerabilities("127.0.0.1")
