@@ -1,6 +1,7 @@
-# Python packages only. External tools (Nmap, Nuclei, Nikto, Lynis) are NOT
+# Python packages only. External tools (Nmap, Nuclei, Nikto, Lynis, ssh) are NOT
 # installed by pip - see README > External tools.
 streamlit>=1.32,<2
 pandas>=2.0,<3
 scikit-learn>=1.3,<2
-pytest>=7.0      # tests only
+joblib>=1.3       # saves/loads the trained models (already a scikit-learn dependency)
+pytest>=7.0       # tests only

@@ -34,6 +34,7 @@ SAFETY
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 
 import config
@@ -119,15 +120,16 @@ def _finding_text(finding: dict) -> str:
 def is_root_login_finding(finding: dict) -> bool:
     """True if the finding's own evidence says SSH root login is permitted.
 
-    Matches the Lynis SSH-7408 detail "PermitRootLogin (set YES to NO)" and
-    plain wording such as "root login is allowed". This only marks a CANDIDATE:
+    Matches the Lynis SSH-7408 detail "PermitRootLogin (set YES to ...)" (the
+    exact wording differs between Lynis versions) and plain wording such as "root login is allowed". This only marks a CANDIDATE:
     apply_fix() still checks the VM's effective configuration itself.
     """
     if not isinstance(finding, dict):
         return False
     text = _finding_text(finding)
     if "permitrootlogin" in text:
-        return "set yes to" in text or "permitrootlogin yes" in text
+        # "PermitRootLogin (set YES to ...)", "PermitRootLogin (YES --> NO)", "PermitRootLogin yes"
+        return re.search(r"permitrootlogin\W+(set\s+)?yes\b", text) is not None
     return "root login" in text and any(w in text for w in ("allowed", "permitted", "enabled"))
 
 

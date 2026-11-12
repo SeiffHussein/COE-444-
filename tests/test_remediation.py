@@ -93,6 +93,8 @@ def test_only_the_root_login_finding_is_remediation_supported():
 
 @pytest.mark.parametrize("title, expected", [
     ("Consider hardening SSH configuration: PermitRootLogin (set YES to NO)", True),
+    ("Consider hardening SSH configuration: PermitRootLogin (set YES to (FORCED-COMMANDS-ONLY|NO|PROHIBIT-PASSWORD|WITHOUT-PASSWORD))", True),
+    ("Consider hardening SSH configuration: PermitRootLogin (YES --> NO)", True),
     ("SSH root login is allowed", True),
     ("Consider hardening SSH configuration: PermitRootLogin (set WITHOUT-PASSWORD to NO)", False),
     ("Consider hardening SSH configuration: MaxAuthTries (set 6 to 3)", False),
