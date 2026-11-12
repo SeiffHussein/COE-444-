@@ -1,0 +1,5 @@
+# FIXTURE: sample /etc/ssh/sshd_config WITHOUT the Include line. Not from a real system.
+
+#Include /etc/ssh/sshd_config.d/*.conf
+PermitRootLogin yes
+UsePAM yes

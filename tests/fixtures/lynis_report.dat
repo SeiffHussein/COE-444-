@@ -1,0 +1,16 @@
+# FIXTURE: sample Lynis report file. Not from a real system.
+report_version_major=1
+report_version_minor=0
+report_datetime_start=2026-05-01 10:02:00
+lynis_version=3.0.9
+os=Linux
+os_fullname=Ubuntu 24.04 LTS
+hostname=coe444-vm
+hardening_index=63
+warning[]=FIRE-4512|iptables module(s) loaded, but no rules active|-|-|
+warning[]=PKGS-7392|Found one or more vulnerable packages.|-|-|
+suggestion[]=SSH-7408|Consider hardening SSH configuration|PermitRootLogin (set YES to NO)|-|
+suggestion[]=SSH-7408|Consider hardening SSH configuration|MaxAuthTries (set 6 to 3)|-|
+suggestion[]=AUTH-9262|Install a PAM module for password strength testing like pam_cracklib or pam_passwdqc|-|-|
+suggestion[]=HTTP-6640|Install Apache mod_evasive to guard webserver against DoS/brute force attempts|-|-|
+report_datetime_end=2026-05-01 10:03:10

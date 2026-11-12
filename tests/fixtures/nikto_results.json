@@ -1,0 +1,15 @@
+[
+  {
+    "_fixture": "FIXTURE: sample Nikto JSON output. Not from a real scan.",
+    "host": "192.0.2.10",
+    "ip": "192.0.2.10",
+    "port": "80",
+    "banner": "Apache/2.4.49 (Ubuntu)",
+    "vulnerabilities": [
+      {"id": "999957", "references": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options", "method": "GET", "url": "/", "msg": "The anti-clickjacking X-Frame-Options header is not present."},
+      {"id": "600050", "references": "", "method": "HEAD", "url": "/", "msg": "Apache/2.4.49 appears to be outdated (current is at least 2.4.58)."},
+      {"id": "999990", "references": "", "method": "GET", "url": "/backup/", "msg": "/backup/: Directory indexing found."},
+      {"id": "003584", "references": "", "method": "GET", "url": "/icons/README", "msg": "/icons/README: Apache default file found."}
+    ]
+  }
+]

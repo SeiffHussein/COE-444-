@@ -1,164 +1,136 @@
 """
-modules/target_scanner.py - target validation and Nmap network discovery.
+modules/target_scanner.py - Nmap network discovery.
 
-OWNER: Member 1 (Network Discovery)
-Data format: schemas.py (every result is a finding dict, see schemas.FINDING_FIELDS)
-Shared helpers: modules/tool_utils.py (run_tool, tool_available)
+scan_target() returns a ScanResult (see schemas.py) with one finding per OPEN
+port, e.g.
 
-Done by Foundation:   validate_target() (complete, tested), sample mode.
-TODO for Member 1:    real Nmap mode in scan_target() + _parse_nmap_xml().
+    title    "Open port 22/tcp (ssh)"      severity "Info"
+    port     22                            service  "ssh"
+    evidence "22/tcp open ssh OpenSSH 9.6p1 Ubuntu 3ubuntu13"
 
-Output contract of scan_target(): one finding per OPEN PORT, e.g.
-    {
-      "id": "3f2a91c0", "target": "192.168.1.10", "source": "nmap",
-      "title": "Open port 22/tcp (ssh)", "severity": "Info",
-      "description": "Port 22/tcp is open and running ssh.",
-      "evidence": "22/tcp open ssh OpenSSH 8.9p1",
-      "ml_priority": "", "recommendation": ""
-    }
-Hosts that are up but have no open ports get one "Host is up" Info finding,
-so the dashboard can still list them.
+An open port is DISCOVERY information, not a vulnerability, so the severity is
+always "Info". Nmap has no severity of its own, so original_severity stays "".
 """
 
 from __future__ import annotations
 
-import ipaddress
-import re
+import xml.etree.ElementTree as ET
 
 import config
-from modules.tool_utils import run_tool, tool_available  # noqa: F401  (used by Member 1)
-from schemas import new_finding, sample_source
-
-# RFC 1123 hostname label: letters, digits, hyphens; not starting/ending with "-".
-_HOST_LABEL = re.compile(r"^(?!-)[A-Za-z0-9-]{1,63}(?<!-)$")
+from modules import tool_utils
+from modules.tool_utils import validate_target  # noqa: F401  (re-exported for callers)
+from schemas import new_finding
 
 
-def validate_target(target: str) -> bool:
-    """Check that `target` is a safe, acceptable scan target.
-
-    Accepted:
-        * IPv4 / IPv6 address          e.g. "192.168.1.10", "::1"
-        * small network in CIDR form   e.g. "192.168.1.0/24" (no larger than
-          /config.MIN_IPV4_PREFIX for IPv4, /config.MIN_IPV6_PREFIX for IPv6)
-        * hostname                     e.g. "localhost", "scanme.nmap.org"
-
-    Rejected: empty input, spaces, anything starting with "-" (could be read as
-    a tool option), shell characters, URLs ("http://..."), ports, over-long
-    names, and ranges larger than the configured limit.
+def scan_target(target: str, sample_mode: bool = False) -> dict:
+    """Discover open ports and service versions with Nmap.
 
     Args:
-        target: user-supplied text.
+        target: an authorized IP / hostname.
+        sample_mode: True -> parse the labelled fixture instead of running Nmap.
 
     Returns:
-        True if acceptable, False otherwise. Never raises.
-
-    NOTE: validation is about FORMAT only. Authorisation (written permission to
-    scan) is confirmed by the user in the dashboard before any real scan.
+        ScanResult dict. FAILED (with an error text) when the target is not
+        allowed, Nmap is missing, times out, exits non-zero, returns malformed
+        XML or the host does not answer. Never raises.
     """
-    if not isinstance(target, str):
-        return False
-    target = target.strip()
-    if not target or len(target) > 253 or target.startswith("-"):
-        return False
-
-    # IP address or CIDR network
-    try:
-        if "/" in target:
-            net = ipaddress.ip_network(target, strict=False)
-            limit = config.MIN_IPV4_PREFIX if net.version == 4 else config.MIN_IPV6_PREFIX
-            return net.prefixlen >= limit
-        ipaddress.ip_address(target)
-        return True
-    except ValueError:
-        pass
-
-    # Hostname (only letters, digits, hyphens and dots allowed)
-    labels = target.rstrip(".").split(".")
-    if all(_HOST_LABEL.match(label) for label in labels):
-        # Reject things like "999.1.1.1" that look numeric but are not valid IPs.
-        return not all(label.isdigit() for label in labels)
-    return False
-
-
-def scan_target(target: str, sample_mode: bool = False) -> list[dict]:
-    """Discover hosts and open ports with Nmap (or return sample results).
-
-    Args:
-        target: IP, small CIDR range or hostname (validated with validate_target).
-        sample_mode: True -> return clearly labelled mock findings
-                     (source "nmap (sample)"); no tool is executed.
-
-    Returns:
-        list of finding dicts (schemas.py format), one per open port.
-        Empty list if the scan completed and nothing was found.
-
-    Raises:
-        ValueError: target fails validate_target().
-        RuntimeError: Nmap missing, failed or timed out
-                      (NotImplementedError until Member 1 finishes real mode).
-    """
-    if not validate_target(target):
-        raise ValueError(f"Invalid target: {target!r}")
-    target = target.strip()
+    target = target.strip() if isinstance(target, str) else target
+    reason = tool_utils.check_target(target)
+    if reason:
+        return tool_utils.not_run("nmap", "FAILED", reason, sample_mode)
 
     if sample_mode:
-        return _sample_results(target)
-
-    # ------------------------------------------------------------------ TODO (Member 1)
-    # 1. If not tool_available("nmap"): raise RuntimeError("Nmap is not installed ...").
-    # 2. Build an ARGUMENT LIST (never a string, never shell=True), e.g.:
-    #        args = ["nmap", "-sT", "-sV", "-T3",
-    #                "--top-ports", str(config.NMAP_TOP_PORTS),
-    #                "-oX", "-", target]
-    #    -sT (TCP connect) works without root/admin on macOS, Linux and Windows.
-    #    Do NOT add intrusive options (no --script vuln, no -A, no -sU floods).
-    # 3. result = run_tool(args)   # timeout comes from config.TOOL_TIMEOUTS["nmap"]
-    # 4. If result.returncode != 0: raise RuntimeError(f"Nmap failed: {result.stderr[:300]}")
-    # 5. return _parse_nmap_xml(result.stdout)
-    # 6. Optional: raise severity for risky services (telnet 23, ftp 21,
-    #    rdp 3389, smb 445 exposed...) - keep the rule list short and documented.
-    # Test with: pytest tests/test_interfaces.py -k target   and a mocked run_tool.
-    # -------------------------------------------------------------------------------
-    raise NotImplementedError("Real Nmap scanning is not implemented yet (Member 1). Use sample mode.")
+        return tool_utils.timed_scan(
+            "nmap",
+            lambda: tool_utils.as_sample(_parse_nmap_xml(tool_utils.load_fixture("nmap_scan.xml", target), target)),
+            is_sample=True)
+    return tool_utils.timed_scan("nmap", lambda: _run_nmap(target))
 
 
-def _parse_nmap_xml(xml_text: str) -> list[dict]:
-    """Convert Nmap XML output (-oX -) into finding dicts.
-
-    TODO (Member 1): use xml.etree.ElementTree (standard library, no new dependency).
-        For each <host> with <status state="up">:
-            address = host/address[@addr]
-            for each <port> whose <state state="open">:
-                portid, protocol, service name/product/version
-                -> new_finding(address, "nmap", f"Open port {portid}/{protocol} ({service})",
-                               severity="Info",
-                               description=f"Port {portid}/{protocol} is open and running {service}.",
-                               evidence=f"{portid}/{protocol} open {service} {product} {version}".strip())
-            no open ports -> one "Host is up" Info finding.
-        Malformed/empty XML -> raise RuntimeError("Could not parse Nmap output").
-
-    Args:
-        xml_text: Nmap's XML output as a string.
-
-    Returns:
-        list of finding dicts (schemas.py format).
-    """
-    raise NotImplementedError("_parse_nmap_xml is not implemented yet (Member 1).")
-
-
-def _sample_results(target: str) -> list[dict]:
-    """Mock discovery results. Clearly labelled as sample data - never real."""
-    src = sample_source("nmap")
-    note = "SAMPLE DATA - not from a real scan. "
-    host = target.split("/")[0] if "/" in target else target
-    return [
-        new_finding(host, src, "Open port 22/tcp (ssh)", severity="Info",
-                    description=note + "Port 22/tcp is open and running ssh.",
-                    evidence="22/tcp open ssh OpenSSH 8.9p1"),
-        new_finding(host, src, "Open port 80/tcp (http)", severity="Info",
-                    description=note + "Port 80/tcp is open and running http.",
-                    evidence="80/tcp open http Apache httpd 2.4.49"),
-        new_finding(host, src, "Open port 23/tcp (telnet)", severity="Medium",
-                    description=note + "Telnet sends credentials in clear text.",
-                    evidence="23/tcp open telnet BusyBox telnetd"),
+def _run_nmap(target: str) -> list[dict]:
+    """Run Nmap and return findings. Raises RuntimeError on any problem."""
+    args = [
+        "nmap",
+        "-sT",                                  # TCP connect scan: needs no root/admin
+        "-sV",                                  # service and version detection
+        "--top-ports", str(config.NMAP_TOP_PORTS),
+        "-oX", "-",                             # XML report on stdout
+        target,
     ]
+    result = tool_utils.run_tool(args)
+    if result.returncode != 0:
+        raise RuntimeError(f"Nmap failed (exit {result.returncode}): {(result.stderr or '').strip()[:300]}")
+    return _parse_nmap_xml(result.stdout, target)
+
+
+def _parse_nmap_xml(xml_text: str, target: str) -> list[dict]:
+    """Convert Nmap XML (-oX -) into one finding per open port.
+
+    Raises:
+        RuntimeError: the XML is malformed, or no host answered (so an
+                      unreachable host is never reported as "nothing found").
+    """
+    try:
+        root = ET.fromstring(xml_text or "")
+    except ET.ParseError as exc:
+        raise RuntimeError(f"Could not parse Nmap XML output: {exc}") from exc
+    if root.tag != "nmaprun":
+        raise RuntimeError("Could not parse Nmap XML output: missing <nmaprun> element.")
+
+    hosts_up = [h for h in root.findall("host")
+                if h.find("status") is not None and h.find("status").get("state") == "up"]
+    if not hosts_up:
+        raise RuntimeError("Nmap ran but the target did not respond (0 hosts up). "
+                           "Check that the VM is running and reachable.")
+
+    findings: list[dict] = []
+    for host in hosts_up:
+        address = host.find("address")
+        host_name = address.get("addr") if address is not None else target
+        for port in host.findall("ports/port"):
+            state = port.find("state")
+            if state is None or state.get("state") != "open":
+                continue
+            number, protocol = port.get("portid", ""), port.get("protocol", "tcp")
+            service = port.find("service")
+            name = _service_name(service)
+            version = " ".join(service.get(k, "") for k in ("product", "version")).strip() if service is not None else ""
+            label = name or "unknown service"
+            findings.append(new_finding(
+                host_name, "nmap", f"Open port {number}/{protocol} ({label})",
+                severity="Info",
+                description=f"Port {number}/{protocol} is open and running {label}"
+                            + (f" ({version})." if version else "."),
+                evidence=f"{number}/{protocol} open {name} {version}".strip(),
+                port=number,
+                service=name,
+            ))
+    return findings
+
+
+def _service_name(service) -> str:
+    """Service name as Nmap reported it; http inside TLS is called https."""
+    if service is None:
+        return ""
+    name = service.get("name", "")
+    if name == "http" and service.get("tunnel") == "ssl":
+        return "https"
+    return name
+
+
+def find_web_urls(findings: list[dict]) -> list[str]:
+    """Return the http(s) URLs of the web ports Nmap discovered.
+
+    Used to decide whether Nikto applies and what Nuclei/Nikto should scan.
+    Example result: ["http://192.0.2.10:80", "https://192.0.2.10:443"]
+    """
+    urls: list[str] = []
+    for f in findings:
+        service = str(f.get("service", "")).lower()
+        if f.get("source") != "nmap" or f.get("port") is None or "http" not in service:
+            continue
+        scheme = "https" if ("https" in service or "ssl" in service) else "http"
+        url = f"{scheme}://{f['target']}:{f['port']}"
+        if url not in urls:
+            urls.append(url)
+    return urls

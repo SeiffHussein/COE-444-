@@ -21,3 +21,15 @@ Thumbs.db
 
 # Local Streamlit secrets (never commit)
 .streamlit/secrets.toml
+
+# Trained ML models (rebuild with: python -m modules.ml_classifier)
+models/*
+!models/.gitkeep
+
+# SSH keys and other secrets (never commit)
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+coe444_vm*
+.env

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FIXTURE: sample Nmap XML output. Not from a real scan. -->
+<nmaprun scanner="nmap" args="nmap -sT -sV --top-ports 100 -oX - 192.0.2.10" start="1777629600" version="7.95" xmloutputversion="1.05">
+  <host starttime="1777629600" endtime="1777629612">
+    <status state="up" reason="conn-refused"/>
+    <address addr="192.0.2.10" addrtype="ipv4"/>
+    <hostnames/>
+    <ports>
+      <extraports state="closed" count="96"/>
+      <port protocol="tcp" portid="22">
+        <state state="open" reason="syn-ack"/>
+        <service name="ssh" product="OpenSSH" version="9.6p1 Ubuntu 3ubuntu13" extrainfo="Ubuntu Linux; protocol 2.0" method="probed" conf="10"/>
+      </port>
+      <port protocol="tcp" portid="80">
+        <state state="open" reason="syn-ack"/>
+        <service name="http" product="Apache httpd" version="2.4.49" extrainfo="(Ubuntu)" method="probed" conf="10"/>
+      </port>
+      <port protocol="tcp" portid="443">
+        <state state="open" reason="syn-ack"/>
+        <service name="http" product="Apache httpd" version="2.4.49" tunnel="ssl" method="probed" conf="10"/>
+      </port>
+      <port protocol="tcp" portid="3306">
+        <state state="closed" reason="conn-refused"/>
+        <service name="mysql" method="table" conf="3"/>
+      </port>
+    </ports>
+  </host>
+  <runstats>
+    <finished time="1777629612" elapsed="12.31" exit="success"/>
+    <hosts up="1" down="0" total="1"/>
+  </runstats>
+</nmaprun>

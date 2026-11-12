@@ -1,109 +1,125 @@
 """
-modules/host_auditor.py - Lynis host security audit.
+modules/host_auditor.py - Lynis host audit, run REMOTELY on the lab VM over SSH.
 
-OWNER: Member 3 (Host Audit & Remediation)
-Data format: schemas.py (every result is a finding dict)
-Shared helpers: modules/tool_utils.py (run_tool, tool_available)
+Lynis audits the machine it runs on, so it must run on the VM itself. We use
+the system `ssh` binary (tool_utils.run_ssh: key-based, BatchMode, timeouts) to
 
-IMPORTANT: Lynis audits the machine it RUNS ON (this laptop), not a remote
-host. It supports Linux and macOS; it does not run natively on Windows (use WSL).
-The audit only READS the system - this module must never change settings.
+    1. run   sudo -n lynis audit system --quick --no-colors
+    2. read  sudo -n cat /var/log/lynis-report.dat
 
-Done by Foundation:   sample mode, OS check.
-TODO for Member 3:    real Lynis run + _parse_lynis_report().
+and parse the report file locally. Both remote commands are constants. The
+audit only READS the VM; nothing here changes any setting.
+
+Report lines we use:
+    warning[]=TEST-ID|text|details|solution|      -> severity Medium
+    suggestion[]=TEST-ID|text|details|solution|   -> severity Low
+    hardening_index=NN                            -> one separate Info finding
+Every other line is plain informational output and is ignored.
 """
 
 from __future__ import annotations
 
-import platform
-import socket
+import config
+from modules import tool_utils
+from schemas import new_finding, normalize_severity
 
-import config  # noqa: F401  (paths/timeouts used by Member 3)
-from modules.tool_utils import run_tool, tool_available  # noqa: F401
-from schemas import new_finding, sample_source
-
-SUPPORTED_SYSTEMS = ("Linux", "Darwin")  # Darwin = macOS
+LYNIS_AUDIT_COMMAND = "sudo -n lynis audit system --quick --no-colors"
+LYNIS_REPORT_COMMAND = "sudo -n cat /var/log/lynis-report.dat"
 
 
-def audit_host(sample_mode: bool = False) -> list[dict]:
-    """Audit the local machine with Lynis (or return sample findings).
-
-    Args:
-        sample_mode: True -> clearly labelled mock findings, Lynis is not run.
+def audit_host(target: str, sample_mode: bool = False) -> dict:
+    """Audit the VM at `target` with Lynis over SSH.
 
     Returns:
-        list of finding dicts (schemas.py format). target = this machine's
-        hostname, source = "lynis". Lynis warnings -> "Medium",
-        suggestions -> "Low" (use schemas.normalize_severity("warning") etc.).
-
-    Raises:
-        RuntimeError: unsupported OS, Lynis missing, failed or timed out
-                      (NotImplementedError until Member 3 finishes real mode).
+        ScanResult dict. FAILED with a clear error for: target not allowed,
+        SSH not configured, authentication failure, unreachable host, timeout,
+        sudo needing a password, Lynis not installed, unreadable or malformed
+        report. Never raises.
     """
-    hostname = socket.gethostname() or "localhost"
+    target = target.strip() if isinstance(target, str) else target
+    reason = tool_utils.check_target(target)
+    if reason:
+        return tool_utils.not_run("lynis", "FAILED", reason, sample_mode)
 
     if sample_mode:
-        return _sample_results(hostname)
-
-    if platform.system() not in SUPPORTED_SYSTEMS:
-        raise RuntimeError(
-            f"Lynis is not supported on {platform.system()}. Use Linux, macOS or WSL, or sample mode."
-        )
-
-    # ------------------------------------------------------------------ TODO (Member 3)
-    # 1. If not tool_available("lynis"): raise RuntimeError("Lynis is not installed ...")
-    # 2. Write the report to a file we control (no root needed for the file):
-    #        report = config.REPORTS_DIR / "lynis-report.dat"
-    #        args = ["lynis", "audit", "system", "--quick", "--no-colors",
-    #                "--report-file", str(report)]
-    #    Running without sudo works but skips some tests - document that in the
-    #    dashboard message. Never pass options that fix or change settings.
-    # 3. res = run_tool(args)   # timeout from config.TOOL_TIMEOUTS["lynis"]
-    #    Non-zero return code with no report file -> RuntimeError(res.stderr[:300])
-    # 4. return _parse_lynis_report(report.read_text(errors="replace"), hostname)
-    # -------------------------------------------------------------------------------
-    raise NotImplementedError("Real Lynis auditing is not implemented yet (Member 3). Use sample mode.")
+        return tool_utils.timed_scan(
+            "lynis",
+            lambda: tool_utils.as_sample(
+                _parse_lynis_report(tool_utils.load_fixture("lynis_report.dat"), target)),
+            is_sample=True)
+    return tool_utils.timed_scan("lynis", lambda: _run_lynis(target))
 
 
-def _parse_lynis_report(report_text: str, hostname: str) -> list[dict]:
-    """Convert a Lynis report file (key=value lines) into finding dicts.
+def _run_lynis(target: str) -> list[dict]:
+    """Run Lynis on the VM and return findings. Raises RuntimeError on any problem."""
+    audit = tool_utils.run_ssh(target, LYNIS_AUDIT_COMMAND, timeout=config.TOOL_TIMEOUTS["lynis"])
+    _raise_on_remote_problem(audit, "run Lynis")
 
-    TODO (Member 3):
-        Lines look like:
-            warning[]=SSH-7408|Root login allowed|-|-|
-            suggestion[]=AUTH-9262|Install a PAM module for password strength|-|-|
-        Split on "=" once, then on "|": test_id, text, details...
-        warning[]    -> severity "Medium"
-        suggestion[] -> severity "Low"
-        title = text, evidence = f"Lynis test {test_id}", description = short explanation.
-        Also read "hardening_index=NN" and add one Info finding with the score.
-        Ignore all other lines. Empty text -> return [].
+    report = tool_utils.run_ssh(target, LYNIS_REPORT_COMMAND)
+    _raise_on_remote_problem(report, "read the Lynis report")
+    if report.returncode != 0:
+        raise RuntimeError("Could not read /var/log/lynis-report.dat on the VM "
+                           f"(exit {report.returncode}): {(report.stderr or '').strip()[:200]}")
+    return _parse_lynis_report(report.stdout, target)
 
-    Args:
-        report_text: full content of the Lynis report file.
-        hostname: name of the audited machine (finding target).
 
-    Returns:
-        list of finding dicts (schemas.py format).
+def _raise_on_remote_problem(result, action: str) -> None:
+    """Turn SSH / sudo / missing-tool problems into a clear RuntimeError."""
+    connection_error = tool_utils.ssh_error(result)
+    if connection_error:
+        raise RuntimeError(f"Could not {action}. {connection_error}")
+    stderr = (result.stderr or "").strip()
+    low = stderr.lower()
+    if "sudo:" in low and "password" in low:
+        raise RuntimeError(f"Could not {action}: sudo asked for a password. "
+                           "Add the passwordless sudoers rule from README > VM preparation.")
+    if result.returncode == 127 or "command not found" in low:
+        raise RuntimeError(f"Could not {action}: Lynis is not installed on the VM "
+                           "(sudo apt install lynis).")
+    if "sudo:" in low and result.returncode != 0:
+        raise RuntimeError(f"Could not {action}: {stderr[:200]}")
+
+
+def _parse_lynis_report(report_text: str, target: str) -> list[dict]:
+    """Convert the Lynis report file (key=value lines) into findings.
+
+    Raises:
+        RuntimeError: the text is not a Lynis report (no lynis_version /
+                      report_version line), so a broken read is never
+                      reported as "no findings".
     """
-    raise NotImplementedError("_parse_lynis_report is not implemented yet (Member 3).")
+    lines = [line.strip() for line in (report_text or "").splitlines()]
+    lines = [line for line in lines if line and not line.startswith("#") and "=" in line]
+    keys = {line.split("=", 1)[0] for line in lines}
+    if not keys & {"lynis_version", "report_version_major"}:
+        raise RuntimeError("Lynis report is malformed or empty (no lynis_version line found).")
 
-
-def _sample_results(hostname: str) -> list[dict]:
-    """Mock Lynis findings. Clearly labelled as sample data."""
-    src = sample_source("lynis")
-    note = "SAMPLE DATA - not from a real audit. "
-    return [
-        new_finding(hostname, src, "SSH root login is allowed", severity="Medium",
-                    description=note + "PermitRootLogin is enabled in the SSH server configuration.",
-                    evidence="Lynis test SSH-7408"),
-        new_finding(hostname, src, "No password strength checking module installed", severity="Low",
-                    description=note + "Users can set weak passwords.",
-                    evidence="Lynis test AUTH-9262"),
-        new_finding(hostname, src, "Host firewall is not active", severity="Medium",
-                    description=note + "No active packet filter was detected.",
-                    evidence="Lynis test FIRE-4590"),
-        new_finding(hostname, src, "Hardening index: 62/100", severity="Info",
-                    description=note + "Overall Lynis hardening score.",
-                    evidence="hardening_index=62"),
-    ]
+    findings: list[dict] = []
+    for line in lines:
+        key, value = line.split("=", 1)
+        if key in ("warning[]", "suggestion[]"):
+            kind = key[:-2]                                     # "warning" / "suggestion"
+            parts = [p.strip() for p in value.split("|")]
+            test_id = parts[0] if parts else ""
+            text = parts[1] if len(parts) > 1 else ""
+            details = parts[2] if len(parts) > 2 and parts[2] not in ("", "-") else ""
+            if not text:
+                continue
+            findings.append(new_finding(
+                target, "lynis", (f"{text}: {details}" if details else text)[:200],
+                severity=normalize_severity(kind),
+                original_severity=kind,
+                description=f"Lynis {kind} from test {test_id}." if test_id else f"Lynis {kind}.",
+                evidence=line,
+                service="ssh" if test_id.startswith("SSH-") else "",
+                check_id=test_id,
+            ))
+        elif key == "hardening_index" and value.strip():
+            # Plain informational output, kept apart from warnings/suggestions.
+            findings.append(new_finding(
+                target, "lynis", f"Lynis hardening index: {value.strip()}/100",
+                severity="Info", original_severity="info",
+                description="Overall Lynis hardening score for the host (higher is better).",
+                evidence=line,
+            ))
+    return findings

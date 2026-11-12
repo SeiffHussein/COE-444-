@@ -1,0 +1,13 @@
+# FIXTURE: sample /etc/ssh/sshd_config (Ubuntu layout). Not from a real system.
+
+# This is the sshd server system-wide configuration file.
+
+Include /etc/ssh/sshd_config.d/*.conf
+
+#Port 22
+#PermitRootLogin prohibit-password
+PermitRootLogin yes
+KbdInteractiveAuthentication no
+UsePAM yes
+X11Forwarding yes
+Subsystem sftp /usr/lib/openssh/sftp-server

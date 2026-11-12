@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FIXTURE: sample Nmap XML output, host up with no open ports. Not from a real scan. -->
+<nmaprun scanner="nmap" args="nmap -sT -sV --top-ports 100 -oX - 192.0.2.10" version="7.95" xmloutputversion="1.05">
+  <host>
+    <status state="up" reason="conn-refused"/>
+    <address addr="192.0.2.10" addrtype="ipv4"/>
+    <ports><extraports state="closed" count="100"/></ports>
+  </host>
+  <runstats><finished exit="success"/><hosts up="1" down="0" total="1"/></runstats>
+</nmaprun>
