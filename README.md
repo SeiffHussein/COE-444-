@@ -66,7 +66,7 @@ modules/
   nvd.py                    NVD feed -> CVE table, CVE lookup
   remediation.py            recommendations + the one automatic fix
   reporting.py              CSV / HTML
-data/nvd_cves.csv.gz        real CVE data built from the NVD feeds 2020-2025 (191,128 CVEs): priority model training data
+data/nvd_cves.csv.gz        real CVE data built from the NVD feeds 2016-2025 (247,563 CVEs): priority model training data
 data/synthetic_findings.csv synthetic training data for the action model (600 rows, fixed seed)
 models/                     trained models (*.joblib, git-ignored, rebuilt by one command)
 reports/                    generated reports (git-ignored)
@@ -103,7 +103,7 @@ python -m streamlit run app.py
 
 If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-`python -m modules.ml_classifier` trains the two ML models into `models/`. It takes under a minute, because the priority model learns from 190,000 real CVEs, and the priority model file is about 13 MB. The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
+`python -m modules.ml_classifier` trains the two ML models into `models/`. It takes under a minute, because the priority model learns from about 246,000 real CVEs, and the priority model file is about 16 MB. The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
 
 ---
 
@@ -359,20 +359,20 @@ Train both with `python -m modules.ml_classifier`. It prints accuracy, macro pre
 
 ### 9.1 Priority model: real data
 
-- **Data.** The CVE table built from the NVD feeds (section 10): 190,004 CVEs that have a CVSS rating.
+- **Data.** The CVE table built from the NVD feeds (section 10): 246,438 CVEs that have a CVSS rating.
 - **Input and label.** Input is the English description of a CVE. The label is the CVSS severity NVD assigned to it. Nothing is synthetic and we wrote no labelling rule.
 - **Method.** TF-IDF turns the text into numbers: a weight for every word, word pair and word triple that appears in at least 3 descriptions (about 345,000 of them). A linear model (`LinearSVC`) then learns one weight per word and severity; for a new description it adds up the weights of its words and picks the severity with the highest total. Because LOW and CRITICAL are rare, they count extra during training (`class_weight="balanced"`). A linear model is also easy to explain: you can list the words that push most strongly towards each severity.
 - **At runtime.** The model reads a finding's title and description and returns a priority.
 
-Results on 47,501 real CVEs the model did not see during training (trained on the other 142,503):
+Results on 61,610 real CVEs the model did not see during training (trained on the other 184,828):
 
 | Accuracy | Macro precision | Macro recall | Macro F1 | Right or one level off |
 |---|---|---|---|---|
-| 0.733 | 0.616 | 0.638 | 0.625 | 0.963 |
+| 0.742 | 0.628 | 0.648 | 0.636 | 0.966 |
 
-For comparison, always answering the most common class (MEDIUM) would score 0.45. Recall per class: CRITICAL 70 %, HIGH 69 %, MEDIUM 80 %, LOW 36 %. LOW is the weak spot because only 2 % of CVEs are rated LOW. Almost all mistakes are one level off (for example HIGH instead of CRITICAL); only 3.7 % are further away.
+For comparison, always answering the most common class (MEDIUM) would score 0.44. Recall per class: CRITICAL 71 %, HIGH 71 %, MEDIUM 80 %, LOW 37 %. LOW is the weak spot because only 2 % of CVEs are rated LOW. Almost all mistakes are one level off (for example HIGH instead of CRITICAL); only 3.4 % are further away.
 
-**How we chose it.** All candidates were trained and tested on the same split:
+**How we chose it.** All candidates were trained and tested on the same split of the 2020-2025 CVEs:
 
 | Model | Text features | Accuracy | Macro F1 | LOW recall | Training | Model file |
 |---|---|---|---|---|---|---|
@@ -382,13 +382,13 @@ For comparison, always answering the most common class (MEDIUM) would score 0.45
 | LinearSVC, no class weights | about 345,000 words, pairs, triples | 0.741 | 0.608 | 18 % | seconds | 11 MB |
 | **LinearSVC, balanced (chosen)** | about 345,000 words, pairs, triples | 0.733 | 0.625 | 36 % | seconds | 11 MB |
 
-Richer text features and different models barely moved the accuracy: everything landed between 0.73 and 0.74. Adding character fragments as extra features did not help either. We chose the balanced linear model because it matches the best macro F1, finds rare LOW CVEs best, trains in seconds instead of minutes and is ten times smaller. The unbalanced version has the highest accuracy (0.741) only because it almost never predicts LOW. The bigger gain came from more data: training on one feed file (10,270 CVEs) gave accuracy 0.672, and adding the yearly feeds raised it to 0.733.
+Richer text features and different models barely moved the accuracy: everything landed between 0.73 and 0.74. Adding character fragments as extra features did not help either. We chose the balanced linear model because it matches the best macro F1, finds rare LOW CVEs best, trains in seconds instead of minutes and is ten times smaller. The unbalanced version has the highest accuracy (0.741) only because it almost never predicts LOW. **More data helped once, then stopped.** Training on one feed file (10,270 CVEs) gave accuracy 0.672, and adding the yearly feeds for 2020-2025 (190,004 CVEs) raised it to 0.733. Adding 2016-2019 as well (56,000 more CVEs) made no difference: scored on the same 47,492 test CVEs from 2020 onwards, accuracy stayed at 0.735 and macro F1 went from 0.626 to 0.627. A model that only reads descriptions seems to top out around here, because descriptions often leave out what decides the CVSS rating (for example whether an attacker needs to log in). The results table above is slightly higher (0.742) only because its test set now also contains 2016-2019 CVEs, which turned out to be a little easier to rate. We kept 2016-2019 in the table mainly for the CVE lookup.
 
 **Limits, stated plainly.**
 
 - The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on, and its ratings for them are unreliable. In the sample data it rates most Lynis and Nikto items MEDIUM or HIGH, for example HIGH for "install a password-quality module", which Lynis itself rates as a low-priority suggestion. CVE descriptions that mention passwords or authentication are often serious, and the model carries that over. Every model we tried had this problem; the random forest was worse and rated several Lynis suggestions CRITICAL. For a non-CVE finding the scanner's own severity is the better guide.
 - NVD has no "informational" class, so the model cannot say "this is not a vulnerability". Findings the scanner itself rates Info (open ports, service detections, the hardening index) are therefore **not rated**: their `ml_priority` stays empty.
-- The training data covers CVEs published from 2020 onwards (section 10).
+- The training data covers CVEs published from 2016 onwards (section 10).
 
 ### 9.2 Action model: synthetic data
 
@@ -422,7 +422,7 @@ Method: `RandomForestClassifier`, 100 trees, depth 8. On the held-out synthetic 
 
 The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. The app never contacts NVD itself; feed files are downloaded by hand and processed by `modules/nvd.py`.
 
-**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table (17 MB) built on 17 November 2026 from the yearly NVD feeds for 2020, 2021, 2022, 2023, 2024 and 2025 plus the "modified" feed: 191,128 CVEs (rejected ones removed), of which 190,004 have a CVSS rating. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. CVEs published before 2020 are not included.
+**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table (21 MB) built on 17 November 2026 from the ten yearly NVD feeds for 2016 to 2025 plus the "modified" feed: 247,563 CVEs (rejected ones removed), of which 246,438 have a CVSS rating. 99.6 % of the ratings use CVSS version 3.0 or 3.1. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. CVEs published before 2016 are not included.
 
 The table has two uses:
 
@@ -470,7 +470,7 @@ python -m modules.ml_classifier
 
 - Scans are not exhaustive: top 100 TCP ports only, no UDP, non-intrusive templates only. No finding does not mean no vulnerability.
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
-- NVD lookup only knows the CVEs in the local table, which covers CVEs published from 2020 onwards. An older CVE gets no official score until its yearly feed is added (section 10).
+- NVD lookup only knows the CVEs in the local table, which covers CVEs published from 2016 onwards. An older CVE gets no official score until its yearly feed is added (section 10).
 - The priority model is right about three times in four on unseen CVEs, and its ratings for findings that are not CVEs are unreliable. Informational findings get no priority (section 9.1).
 - The action model is trained on synthetic data and is advisory only (section 9.2).
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
