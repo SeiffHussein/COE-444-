@@ -66,7 +66,7 @@ modules/
   nvd.py                    NVD feed -> CVE table, CVE lookup
   remediation.py            recommendations + the one automatic fix
   reporting.py              CSV / HTML
-data/nvd_cves.csv.gz        real CVE data built from the NVD feed (10,555 CVEs): priority model training data
+data/nvd_cves.csv.gz        real CVE data built from the NVD feeds 2020-2025 (191,128 CVEs): priority model training data
 data/synthetic_findings.csv synthetic training data for the action model (600 rows, fixed seed)
 models/                     trained models (*.joblib, git-ignored, rebuilt by one command)
 reports/                    generated reports (git-ignored)
@@ -103,7 +103,7 @@ python -m streamlit run app.py
 
 If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-`python -m modules.ml_classifier` trains the two ML models into `models/` (about ten seconds). The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
+`python -m modules.ml_classifier` trains the two ML models into `models/`. It takes about four minutes on a laptop, because the priority model learns from 190,000 real CVEs, and the priority model file is about 125 MB. The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
 
 ---
 
@@ -359,24 +359,26 @@ Train both with `python -m modules.ml_classifier`. It prints accuracy, macro pre
 
 ### 9.1 Priority model: real data
 
-- **Data.** The CVE table built from the NVD feed (section 10): 10,270 CVEs that have a CVSS rating.
+- **Data.** The CVE table built from the NVD feeds (section 10): 190,004 CVEs that have a CVSS rating.
 - **Input and label.** Input is the English description of a CVE. The label is the CVSS severity NVD assigned to it. Nothing is synthetic and we wrote no labelling rule.
 - **Method.** TF-IDF turns the text into numbers (a weight for each of the 5,000 most useful words and word pairs). A `RandomForestClassifier` with 100 trees learns which words go with which severity.
 - **At runtime.** The model reads a finding's title and description and returns a priority.
 
-Results on 2,568 real CVEs the model did not see during training:
+Results on 47,501 real CVEs the model did not see during training (trained on the other 142,503):
 
 | Accuracy | Macro precision | Macro recall | Macro F1 |
 |---|---|---|---|
-| 0.672 | 0.600 | 0.549 | 0.565 |
+| 0.733 | 0.632 | 0.621 | 0.622 |
 
-For comparison, always answering the most common class (HIGH) would score 0.45. The model is weakest on the two rare classes, LOW (34 % recall) and CRITICAL (42 % recall). Most mistakes are one level off.
+For comparison, always answering the most common class (MEDIUM) would score 0.45. Recall per class: CRITICAL 70 %, HIGH 70 %, MEDIUM 80 %, LOW 29 %. LOW is the weak spot because only 2 % of CVEs are rated LOW. Most mistakes are one level off.
+
+Training on one feed file (10,270 CVEs) gave accuracy 0.672; adding the yearly feeds raised it to 0.733. We also tried logistic regression (accuracy 0.632-0.711, but macro F1 at most 0.543) and smaller forests; the full random forest scored best.
 
 **Limits, stated plainly.**
 
-- The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on. In the sample data it rates all of them MEDIUM, which is its fallback answer when it recognises nothing. Treat the priority of a non-CVE finding as a weak hint.
+- The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on, and its ratings for them are often implausible. In the sample data it rates the Lynis suggestions to lower MaxAuthTries and to install a password-quality module CRITICAL, because CVE descriptions mentioning SSH, authentication or passwords are often critical. Every model we tried had this problem. Treat the priority of a non-CVE finding as unreliable; the scanner's own severity is the better guide there.
 - NVD has no "informational" class, so the model cannot say "this is not a vulnerability". Findings the scanner itself rates Info (open ports, service detections, the hardening index) are therefore **not rated**: their `ml_priority` stays empty.
-- The training data is one feed file covering mostly 2026 CVEs. More feeds would likely improve it (section 10).
+- The training data covers CVEs published from 2020 onwards (section 10).
 
 ### 9.2 Action model: synthetic data
 
@@ -410,7 +412,7 @@ Method: `RandomForestClassifier`, 100 trees, depth 8. On the held-out synthetic 
 
 The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. The app never contacts NVD itself; feed files are downloaded by hand and processed by `modules/nvd.py`.
 
-**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table built from the NVD "modified" feed of 17 November 2026: 10,555 CVEs (rejected ones removed), of which 10,270 have a CVSS rating. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. The "modified" feed holds only recently added or changed CVEs, so most entries are from 2026.
+**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table (17 MB) built on 17 November 2026 from the yearly NVD feeds for 2020, 2021, 2022, 2023, 2024 and 2025 plus the "modified" feed: 191,128 CVEs (rejected ones removed), of which 190,004 have a CVSS rating. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. CVEs published before 2020 are not included.
 
 The table has two uses:
 
@@ -458,8 +460,8 @@ python -m modules.ml_classifier
 
 - Scans are not exhaustive: top 100 TCP ports only, no UDP, non-intrusive templates only. No finding does not mean no vulnerability.
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
-- NVD lookup only knows the CVEs in the local table, which currently covers recent CVEs only. Older ones, such as the Apache CVE in the sample data, are not found until more feeds are added (section 10).
-- The priority model is right about two times in three on unseen CVEs and is much less reliable for findings that are not CVEs. Informational findings get no priority (section 9.1).
+- NVD lookup only knows the CVEs in the local table, which covers CVEs published from 2020 onwards. An older CVE gets no official score until its yearly feed is added (section 10).
+- The priority model is right about three times in four on unseen CVEs, and its ratings for findings that are not CVEs are often implausible. Informational findings get no priority (section 9.1).
 - The action model is trained on synthetic data and is advisory only (section 9.2).
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
 - The exact Lynis wording for the root-login item differs between Lynis versions. The detection accepts the common forms; check it on your VM's version during the first real run.

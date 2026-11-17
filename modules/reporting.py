@@ -218,7 +218,7 @@ Authorized lab use only.</p>
      run non-intrusive checks only, and a tool that failed or was skipped contributed nothing.
      The absence of a finding does not prove the absence of a vulnerability.</li>
  <li>ML priority and ML action are advisory. The priority model was trained on real NVD CVE descriptions
-     and is right about two times in three on unseen CVEs. Findings that are not CVEs (Lynis and Nikto items)
+     and is right about three times in four on unseen CVEs. Findings that are not CVEs (Lynis and Nikto items)
      are outside what it was trained on, so their priority is much less reliable. Informational findings
      are not rated. The action model was trained on synthetic data labelled by a hand-written rule.</li>
  <li>Official CVSS scores come from a local copy of NVD data and are only as complete and current as the
