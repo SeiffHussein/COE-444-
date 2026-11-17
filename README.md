@@ -422,7 +422,7 @@ Method: `RandomForestClassifier`, 100 trees, depth 8. On the held-out synthetic 
 
 The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. The app never contacts NVD itself; feed files are downloaded by hand and processed by `modules/nvd.py`.
 
-**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table (21 MB) built on 17 November 2026 from the ten yearly NVD feeds for 2016 to 2025 plus the "modified" feed: 247,563 CVEs (rejected ones removed), of which 246,438 have a CVSS rating. 99.6 % of the ratings use CVSS version 3.0 or 3.1. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. CVEs published before 2016 are not included.
+**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table (21 MB) built on 17 November 2026 from the ten yearly NVD feeds for 2016 to 2025 plus the "modified" feed: 247,563 CVEs (rejected ones removed), of which 246,438 have a CVSS rating. 98.6 % of the ratings use CVSS version 3.0 or 3.1, 1.3 % the newer 4.0 and 0.1 % the old 2.0. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. CVEs published before 2016 are not included.
 
 The table has two uses:
 
