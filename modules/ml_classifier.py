@@ -12,7 +12,10 @@ PRIORITY MODEL (real data)
     Training data: the CVE table built from the NVD feeds (modules/nvd.py,
     data/nvd_cves.csv.gz). Input = the English description of a CVE,
     label = the official CVSS severity NVD gave it.
-    Method: TF-IDF (weights for words and word pairs) -> RandomForestClassifier.
+    Method: TF-IDF (a weight for every word, word pair and word triple that
+    appears in at least 3 descriptions) -> LinearSVC, a linear model: each
+    word gets one learned weight per severity, and the severity with the
+    highest total wins. Rare classes get extra weight (class_weight="balanced").
     At runtime the input is a finding's title + description.
 
     Limits to state clearly:
@@ -62,6 +65,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
+from sklearn.svm import LinearSVC
 
 import config
 from modules import nvd
@@ -219,11 +223,23 @@ def load_dataset() -> tuple[pd.DataFrame, pd.Series]:
 
 
 # ---------------------------------------------------------------- training
-def evaluate_predictions(y_true, predicted, labels: tuple[str, ...], train_rows: int) -> dict:
-    """Accuracy, macro precision/recall/F1 and confusion matrix for one model."""
+def evaluate_predictions(y_true, predicted, labels: tuple[str, ...], train_rows: int,
+                         ordered: bool = False) -> dict:
+    """Accuracy, macro precision/recall/F1, per-class recall and confusion matrix for one model.
+
+    ordered=True (labels run from most to least severe) also reports
+    "within_one_level": the share of predictions that are right or one level off.
+    """
     precision, recall, f1, _ = precision_recall_fscore_support(
         y_true, predicted, labels=list(labels), average="macro", zero_division=0)
-    return {
+    per_class = precision_recall_fscore_support(y_true, predicted, labels=list(labels), zero_division=0)[1]
+    extra = {}
+    if ordered:
+        rank = {label: i for i, label in enumerate(labels)}
+        near = sum(abs(rank[a] - rank[b]) <= 1 for a, b in zip(y_true, predicted))
+        extra["within_one_level"] = round(near / len(y_true), 4)
+    return {**extra,
+        "recall_per_class": {label: round(float(r), 4) for label, r in zip(labels, per_class)},
         "accuracy": round(float(accuracy_score(y_true, predicted)), 4),
         "precision_macro": round(float(precision), 4),
         "recall_macro": round(float(recall), 4),
@@ -253,13 +269,13 @@ def train_priority_model() -> dict:
         texts, labels, test_size=config.ML_TEST_SIZE, random_state=config.RANDOM_SEED, stratify=labels)
 
     model = make_pipeline(
-        # words and word pairs -> numbers (how characteristic each word is for a description)
-        TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words="english", sublinear_tf=True),
-        RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=config.RANDOM_SEED,
-                               n_jobs=-1),          # use every CPU core: the NVD table is large
+        # words, word pairs and word triples -> numbers (how characteristic each is for a description)
+        TfidfVectorizer(ngram_range=(1, 3), min_df=3, stop_words="english", sublinear_tf=True),
+        # one weight per word and severity; rare severities (LOW, CRITICAL) count extra
+        LinearSVC(C=0.5, class_weight="balanced", random_state=config.RANDOM_SEED),
     )
     model.fit(X_train, y_train)
-    metrics = evaluate_predictions(y_test, model.predict(X_test), ML_PRIORITIES, len(X_train))
+    metrics = evaluate_predictions(y_test, model.predict(X_test), ML_PRIORITIES, len(X_train), ordered=True)
     metrics["training_data"] = f"real NVD CVE descriptions ({len(rows)} rated CVEs)"
 
     path = Path(config.PRIORITY_MODEL_PATH)
@@ -302,7 +318,7 @@ def train_models() -> dict:
 
 
 def format_metrics(name: str, metrics: dict) -> str:
-    """Readable text block: accuracy, macro precision/recall/F1 and the confusion matrix."""
+    """Readable text block: accuracy, macro precision/recall/F1, extra metrics and the confusion matrix."""
     labels = metrics["labels"]
     width = max(len(label) for label in labels) + 2
     lines = [
@@ -312,6 +328,12 @@ def format_metrics(name: str, metrics: dict) -> str:
         f"macro precision {metrics['precision_macro']:.3f}",
         f"macro recall    {metrics['recall_macro']:.3f}",
         f"macro F1        {metrics['f1_macro']:.3f}",
+    ]
+    if "within_one_level" in metrics:
+        lines.append(f"right or one level off  {metrics['within_one_level']:.3f}")
+    if "recall_per_class" in metrics:
+        lines.append("recall per class " + ", ".join(f"{k} {v:.2f}" for k, v in metrics["recall_per_class"].items()))
+    lines += [
         "confusion matrix (rows = true label, columns = predicted label, same order):",
     ]
     for label, row in zip(labels, metrics["confusion_matrix"]):

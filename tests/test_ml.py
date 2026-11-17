@@ -80,6 +80,16 @@ def test_priority_model_is_trained_on_real_nvd_rows(trained_model_dir):
     assert set(prediction) <= set(schemas.ML_PRIORITIES)
 
 
+def test_within_one_level_metric():
+    metrics = ml_classifier.evaluate_predictions(
+        ["CRITICAL", "CRITICAL", "LOW", "MEDIUM"], ["HIGH", "MEDIUM", "LOW", "MEDIUM"],
+        schemas.ML_PRIORITIES, train_rows=10, ordered=True)
+    assert metrics["accuracy"] == 0.5 and metrics["within_one_level"] == 0.75   # CRITICAL -> MEDIUM is two off
+    assert metrics["recall_per_class"] == {"CRITICAL": 0.0, "HIGH": 0.0, "MEDIUM": 1.0, "LOW": 1.0}
+    assert "within_one_level" not in ml_classifier.evaluate_predictions(["A", "B"], ["A", "A"], ("A", "B"), 1)
+    assert "right or one level off  0.750" in ml_classifier.format_metrics("priority", metrics)
+
+
 def test_priority_training_needs_the_nvd_index(monkeypatch, tmp_path):
     monkeypatch.setattr(config, "NVD_INDEX_PATH", tmp_path / "missing.csv.gz")
     with pytest.raises(RuntimeError, match="NVD index"):

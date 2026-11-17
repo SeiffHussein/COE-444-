@@ -103,7 +103,7 @@ python -m streamlit run app.py
 
 If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-`python -m modules.ml_classifier` trains the two ML models into `models/`. It takes about four minutes on a laptop, because the priority model learns from 190,000 real CVEs, and the priority model file is about 125 MB. The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
+`python -m modules.ml_classifier` trains the two ML models into `models/`. It takes under a minute, because the priority model learns from 190,000 real CVEs, and the priority model file is about 13 MB. The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
 
 ---
 
@@ -361,22 +361,32 @@ Train both with `python -m modules.ml_classifier`. It prints accuracy, macro pre
 
 - **Data.** The CVE table built from the NVD feeds (section 10): 190,004 CVEs that have a CVSS rating.
 - **Input and label.** Input is the English description of a CVE. The label is the CVSS severity NVD assigned to it. Nothing is synthetic and we wrote no labelling rule.
-- **Method.** TF-IDF turns the text into numbers (a weight for each of the 5,000 most useful words and word pairs). A `RandomForestClassifier` with 100 trees learns which words go with which severity.
+- **Method.** TF-IDF turns the text into numbers: a weight for every word, word pair and word triple that appears in at least 3 descriptions (about 345,000 of them). A linear model (`LinearSVC`) then learns one weight per word and severity; for a new description it adds up the weights of its words and picks the severity with the highest total. Because LOW and CRITICAL are rare, they count extra during training (`class_weight="balanced"`). A linear model is also easy to explain: you can list the words that push most strongly towards each severity.
 - **At runtime.** The model reads a finding's title and description and returns a priority.
 
 Results on 47,501 real CVEs the model did not see during training (trained on the other 142,503):
 
-| Accuracy | Macro precision | Macro recall | Macro F1 |
-|---|---|---|---|
-| 0.733 | 0.632 | 0.621 | 0.622 |
+| Accuracy | Macro precision | Macro recall | Macro F1 | Right or one level off |
+|---|---|---|---|---|
+| 0.733 | 0.616 | 0.638 | 0.625 | 0.963 |
 
-For comparison, always answering the most common class (MEDIUM) would score 0.45. Recall per class: CRITICAL 70 %, HIGH 70 %, MEDIUM 80 %, LOW 29 %. LOW is the weak spot because only 2 % of CVEs are rated LOW. Most mistakes are one level off.
+For comparison, always answering the most common class (MEDIUM) would score 0.45. Recall per class: CRITICAL 70 %, HIGH 69 %, MEDIUM 80 %, LOW 36 %. LOW is the weak spot because only 2 % of CVEs are rated LOW. Almost all mistakes are one level off (for example HIGH instead of CRITICAL); only 3.7 % are further away.
 
-Training on one feed file (10,270 CVEs) gave accuracy 0.672; adding the yearly feeds raised it to 0.733. We also tried logistic regression (accuracy 0.632-0.711, but macro F1 at most 0.543) and smaller forests; the full random forest scored best.
+**How we chose it.** All candidates were trained and tested on the same split:
+
+| Model | Text features | Accuracy | Macro F1 | LOW recall | Training | Model file |
+|---|---|---|---|---|---|---|
+| Random forest, 100 trees | 5,000 words and pairs | 0.733 | 0.622 | 29 % | about 4 min | 125 MB |
+| Random forest, 100 trees | 50,000 words and pairs | 0.737 | 0.626 | 27 % | about 6 min | larger |
+| Logistic regression | about 350,000 words and pairs | 0.737 | 0.615 | 21 % | about 2 min | 11 MB |
+| LinearSVC, no class weights | about 345,000 words, pairs, triples | 0.741 | 0.608 | 18 % | seconds | 11 MB |
+| **LinearSVC, balanced (chosen)** | about 345,000 words, pairs, triples | 0.733 | 0.625 | 36 % | seconds | 11 MB |
+
+Richer text features and different models barely moved the accuracy: everything landed between 0.73 and 0.74. Adding character fragments as extra features did not help either. We chose the balanced linear model because it matches the best macro F1, finds rare LOW CVEs best, trains in seconds instead of minutes and is ten times smaller. The unbalanced version has the highest accuracy (0.741) only because it almost never predicts LOW. The bigger gain came from more data: training on one feed file (10,270 CVEs) gave accuracy 0.672, and adding the yearly feeds raised it to 0.733.
 
 **Limits, stated plainly.**
 
-- The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on, and its ratings for them are often implausible. In the sample data it rates the Lynis suggestions to lower MaxAuthTries and to install a password-quality module CRITICAL, because CVE descriptions mentioning SSH, authentication or passwords are often critical. Every model we tried had this problem. Treat the priority of a non-CVE finding as unreliable; the scanner's own severity is the better guide there.
+- The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on, and its ratings for them are unreliable. In the sample data it rates most Lynis and Nikto items MEDIUM or HIGH, for example HIGH for "install a password-quality module", which Lynis itself rates as a low-priority suggestion. CVE descriptions that mention passwords or authentication are often serious, and the model carries that over. Every model we tried had this problem; the random forest was worse and rated several Lynis suggestions CRITICAL. For a non-CVE finding the scanner's own severity is the better guide.
 - NVD has no "informational" class, so the model cannot say "this is not a vulnerability". Findings the scanner itself rates Info (open ports, service detections, the hardening index) are therefore **not rated**: their `ml_priority` stays empty.
 - The training data covers CVEs published from 2020 onwards (section 10).
 
@@ -461,7 +471,7 @@ python -m modules.ml_classifier
 - Scans are not exhaustive: top 100 TCP ports only, no UDP, non-intrusive templates only. No finding does not mean no vulnerability.
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
 - NVD lookup only knows the CVEs in the local table, which covers CVEs published from 2020 onwards. An older CVE gets no official score until its yearly feed is added (section 10).
-- The priority model is right about three times in four on unseen CVEs, and its ratings for findings that are not CVEs are often implausible. Informational findings get no priority (section 9.1).
+- The priority model is right about three times in four on unseen CVEs, and its ratings for findings that are not CVEs are unreliable. Informational findings get no priority (section 9.1).
 - The action model is trained on synthetic data and is advisory only (section 9.2).
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
 - The exact Lynis wording for the root-login item differs between Lynis versions. The detection accepts the common forms; check it on your VM's version during the first real run.
