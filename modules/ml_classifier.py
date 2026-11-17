@@ -255,7 +255,8 @@ def train_priority_model() -> dict:
     model = make_pipeline(
         # words and word pairs -> numbers (how characteristic each word is for a description)
         TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words="english", sublinear_tf=True),
-        RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=config.RANDOM_SEED),
+        RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=config.RANDOM_SEED,
+                               n_jobs=-1),          # use every CPU core: the NVD table is large
     )
     model.fit(X_train, y_train)
     metrics = evaluate_predictions(y_test, model.predict(X_test), ML_PRIORITIES, len(X_train))
@@ -319,17 +320,25 @@ def format_metrics(name: str, metrics: dict) -> str:
 
 
 # ---------------------------------------------------------------- runtime
+_loaded_models: dict = {}      # {(path, modified time): bundle} - the priority model is large, load it once
+
+
 def load_model(path: str | Path) -> dict:
     """Load one saved model bundle. Raises RuntimeError if missing or unreadable."""
     path = Path(path)
     if not path.exists():
         raise RuntimeError(f"Model file {path.name} is missing. Train it with: python -m modules.ml_classifier")
-    try:
-        bundle = joblib.load(path)
-        bundle["model"], bundle["labels"]
-    except Exception as exc:  # corrupt file, wrong library version, wrong content
-        raise RuntimeError(f"Model file {path.name} could not be loaded: {exc}") from exc
-    return bundle
+    key = (str(path), path.stat().st_mtime)
+    if key not in _loaded_models:
+        try:
+            bundle = joblib.load(path)
+            bundle["model"], bundle["labels"]
+        except Exception as exc:  # corrupt file, wrong library version, wrong content
+            raise RuntimeError(f"Model file {path.name} could not be loaded: {exc}") from exc
+        for old_key in [k for k in _loaded_models if k[0] == str(path)]:
+            del _loaded_models[old_key]             # drop an older version of the same file
+        _loaded_models[key] = bundle
+    return _loaded_models[key]
 
 
 def classify_findings(findings: list[dict]) -> tuple[list[dict], dict]:
