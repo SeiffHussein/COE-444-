@@ -134,7 +134,7 @@ def main() -> None:
                "are official values looked up by CVE id (empty if the CVE is not in the local NVD index).")
     st.caption("ML priority is advisory: the model was trained on real NVD CVE descriptions, is much less reliable "
                "for findings that are not CVEs, and does not rate informational findings. "
-               "ML action is advisory and trained on synthetic data.")
+               "ML action is advisory: learned from real Nuclei and Lynis checks, labelled by our own rule.")
 
     st.markdown("**Evidence** (expand a finding)")
     for row in view.to_dict("records"):
@@ -203,8 +203,8 @@ def main() -> None:
     # ================================================================ ML details
     with st.expander("ML model details"):
         st.write("The **priority** model is trained and tested on real NVD CVE descriptions; its score says how well "
-                 "it rates CVEs, not other kinds of findings. The **action** model is trained on synthetic data "
-                 "labelled by our own rule; its score only shows that it learned that rule.")
+                 "it rates CVEs, not other kinds of findings. The **action** model learns from real Nuclei and Lynis checks, "
+                 "but its labels come from our own rule; its score shows how well it recovers that rule.")
         for name, metrics in ml_classifier.model_metrics().items():
             if metrics:
                 st.code(ml_classifier.format_metrics(name, metrics), language=None)

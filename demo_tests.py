@@ -213,6 +213,15 @@ def t18():
            f"{unknown['cvss_score']} '{unknown['nvd_severity']}', found {status['matched']} of {status['cve_findings']}"
 
 
+def t20():
+    result = orchestrator.run_assessment("127.0.0.1", sample_mode=True)
+    action = {f["title"]: f["ml_action"] for f in result["findings"]}
+    picks = [("Open port 22/tcp (ssh)", "port 22"), ("Self Signed SSL Certificate", "self-signed cert"),
+             ("Consider hardening SSH configuration: PermitRootLogin (set YES to NO)", "root login")]
+    trained_on = "real" if "real Nuclei and Lynis" in ml_classifier.model_metrics()["action"]["training_data"] else "other"
+    return f"trained on {trained_on} checks, " + ", ".join(f"{label} -> {action[title]}" for title, label in picks)
+
+
 def t19():
     metrics = ml_classifier.model_metrics()["priority"]
     result = orchestrator.run_assessment("127.0.0.1", sample_mode=True)
@@ -248,6 +257,8 @@ SCENARIOS = [
      "known CVE -> 9.8 CRITICAL, CVE not in index -> None '', found 1 of 2", t18),
     ("T19", "Priority model: trained on real NVD data; informational findings are not rated",
      "trained on real NVD data=True, Info findings rated=0 of 6, other findings rated=12 of 12", t19),
+    ("T20", "Action model: trained on real Nuclei/Lynis checks, sensible actions for key findings",
+     "trained on real checks, port 22 -> REVIEW_SERVICE, self-signed cert -> REVIEW_TLS, root login -> HARDEN_SSH", t20),
 ]
 
 

@@ -220,7 +220,8 @@ Authorized lab use only.</p>
  <li>ML priority and ML action are advisory. The priority model was trained on real NVD CVE descriptions
      and is right about three times in four on unseen CVEs. Findings that are not CVEs (Lynis and Nikto items)
      are outside what it was trained on, so their priority is much less reliable. Informational findings
-     are not rated. The action model was trained on synthetic data labelled by a hand-written rule.</li>
+     are not rated. The action model was trained on about 11,000 real
+     Nuclei and Lynis checks, but its labels come from a rule we wrote based on how those checks are filed.</li>
  <li>Official CVSS scores come from a local copy of NVD data and are only as complete and current as the
      feed files it was built from.</li>
  <li>Nikto does not rate its findings; their severity is estimated from keywords.</li>

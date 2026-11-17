@@ -4,4 +4,5 @@ streamlit>=1.32,<2
 pandas>=2.0,<3
 scikit-learn>=1.3,<2
 joblib>=1.3       # saves/loads the trained models (already a scikit-learn dependency)
+pyyaml>=6         # reads Nuclei templates when rebuilding the action dataset (and in tests)
 pytest>=7.0       # tests only

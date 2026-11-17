@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 REPORTS_DIR = BASE_DIR / "reports"
 MODELS_DIR = BASE_DIR / "models"
-SYNTHETIC_DATASET_PATH = DATA_DIR / "synthetic_findings.csv"
+ACTION_DATASET_PATH = DATA_DIR / "action_training.csv.gz"  # real checks from Nuclei + Lynis (action model)
 PRIORITY_MODEL_PATH = MODELS_DIR / "priority_model.joblib"
 ACTION_MODEL_PATH = MODELS_DIR / "action_model.joblib"
 # NVD (National Vulnerability Database) data - see modules/nvd.py
@@ -80,4 +80,3 @@ NIKTO_MAX_TIME = "300s"       # nikto -maxtime value
 # ---------------------------------------------------------------- ML
 RANDOM_SEED = 42
 ML_TEST_SIZE = 0.25
-SYNTHETIC_ROWS = 600

@@ -1,0 +1,6 @@
+# FIXTURE: a cloud template - outside the folders the project uses, so it must be ignored.
+id: aws-ignored
+info:
+  name: AWS Check That Must Be Ignored
+  severity: medium
+  tags: aws,cloud

@@ -1,0 +1,6 @@
+# FIXTURE: hand-written template in the Nuclei format.
+id: demo-c2
+info:
+  name: Demo C2 Server - Detect
+  severity: info
+  tags: c2,malware,ssl,tls

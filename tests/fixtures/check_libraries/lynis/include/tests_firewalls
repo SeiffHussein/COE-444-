@@ -1,0 +1,6 @@
+# FIXTURE: hand-written file in the format of Lynis include/tests_* files.
+    Register --test-no FIRE-4512 --weight L --network NO --category security --description "Check iptables rules"
+        ReportWarning "${TEST_NO}" "iptables module(s) loaded, but no rules active"
+    Register --test-no FIRE-4590 --weight L --network NO --category security --description "Check firewall"
+        ReportSuggestion "${TEST_NO}" "Consider avoid ${3} target if possible"
+        ReportSuggestion "${TEST_NO}" "ok"

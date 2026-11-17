@@ -62,12 +62,14 @@ modules/
   vulnerability_scanner.py  Nuclei (JSONL) and Nikto (JSON)
   host_auditor.py           Lynis over SSH (report file)
   orchestrator.py           the pipeline
-  ml_classifier.py          priority model (real NVD data), action model (synthetic data)
+  ml_classifier.py          priority model (real NVD CVEs), action model (real scanner checks)
   nvd.py                    NVD feed -> CVE table, CVE lookup
+  action_data.py            Nuclei templates + Lynis messages -> action training data
   remediation.py            recommendations + the one automatic fix
   reporting.py              CSV / HTML
 data/nvd_cves.csv.gz        real CVE data built from the NVD feeds 2016-2025 (247,563 CVEs): priority model training data
-data/synthetic_findings.csv synthetic training data for the action model (600 rows, fixed seed)
+data/action_training.csv.gz real Nuclei and Lynis checks (11,251): action model training data
+data/README.md              where each data file comes from, and its licence (data/licenses/)
 models/                     trained models (*.joblib, git-ignored, rebuilt by one command)
 reports/                    generated reports (git-ignored)
 tests/                      pytest suite; tests/fixtures/ = labelled sample tool output
@@ -224,7 +226,8 @@ Everything is in `config.py`. The lab values can also be set with environment va
 | `ALLOW_AUTO_REMEDIATION` | `COE444_ALLOW_REMEDIATION=1` | master switch for the one fix (default off) |
 | `AUTHORIZED_TARGETS` | - | `127.0.0.1` plus `VM_IP`. Nothing else is ever scanned. |
 | `NMAP_TOP_PORTS`, `NUCLEI_RATE_LIMIT`, `NIKTO_MAX_TIME`, `TOOL_TIMEOUTS` | - | scan limits and timeouts |
-| `RANDOM_SEED`, `SYNTHETIC_ROWS` | - | ML reproducibility |
+| `RANDOM_SEED`, `ML_TEST_SIZE` | - | ML reproducibility and the size of the test split |
+| `ACTION_DATASET_PATH` | - | the action model's training data |
 | `NVD_INDEX_PATH`, `NVD_FEEDS_DIR` | - | the CVE table and the folder for downloaded feeds |
 
 macOS example:
@@ -282,7 +285,7 @@ python demo_tests.py
 - The test suite never touches a real system. `tests/conftest.py` blocks `subprocess` for every test; tools and SSH are replaced by mocks that answer with the fixtures. Models are trained into a temporary folder.
 - The NVD tests use a small real excerpt of the feed (82 CVEs) in `tests/fixtures/`.
 - Covered: each scanner (success, empty success, missing tool, timeout, malformed output, non-zero exit), Nikto `NOT_APPLICABLE`, unauthorized targets, the schema, both ML models (train, save, reload, valid labels, missing model), recommendation mapping, every remediation guard, report content and HTML escaping, the orchestrator with one tool failing, and the dashboard (import and page load run nothing).
-- `demo_tests.py` prints `Test / Scenario / Expected / Actual / Result` for 19 key scenarios and a totals line. `PASS` is computed by comparing the actual value with the expected one.
+- `demo_tests.py` prints `Test / Scenario / Expected / Actual / Result` for 20 key scenarios and a totals line. `PASS` is computed by comparing the actual value with the expected one.
 
 ---
 
@@ -353,7 +356,7 @@ The scanners find the issues. Two models only add advice: how urgent a finding i
 | Model | Predicts | Training data | Input |
 |---|---|---|---|
 | Priority | `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` | **real** NVD CVE records | text of the description |
-| Action | one of 7 action labels | **synthetic** findings | 5 simple features |
+| Action | one of 7 action labels | **real** Nuclei and Lynis checks, labelled by our rule | text of the name and description |
 
 Train both with `python -m modules.ml_classifier`. It prints accuracy, macro precision/recall/F1 and a confusion matrix for each model, saves them under `models/`, then reloads each file and checks that it predicts valid labels. Both use a stratified 75/25 split and `config.RANDOM_SEED`.
 
@@ -390,31 +393,57 @@ Richer text features and different models barely moved the accuracy: everything 
 - NVD has no "informational" class, so the model cannot say "this is not a vulnerability". Findings the scanner itself rates Info (open ports, service detections, the hardening index) are therefore **not rated**: their `ml_priority` stays empty.
 - The training data covers CVEs published from 2016 onwards (section 10).
 
-### 9.2 Action model: synthetic data
+### 9.2 Action model: real checks, rule-based labels
 
-NVD has no "what should be done" label, so this model still learns from `data/synthetic_findings.csv`: 600 rows generated with a fixed seed, covering all four tools and every action.
+There is no public dataset that says "for this finding, the right action is X". So the action model learns from the next best thing: the public check libraries of two of the project's own scanners. Every row is a real check written by the tool's maintainers.
 
-| Feature | Values | Source |
-|---|---|---|
-| `severity_score` | 0-4 | normalized severity |
-| `source_tool` | nmap / nuclei / nikto / lynis | finding |
-| `has_cve` | 0/1 | the tool reported a CVE |
-| `category` | ssh / web / tls / other / none | port, service and keywords |
-| `is_misconfiguration` | 0/1 | Lynis warning/suggestion, or configuration keywords, and no CVE |
+- **Data.** `data/action_training.csv.gz`, built by `modules/action_data.py`:
+  - 10,944 **Nuclei templates** (the web, network and TLS families the app actually runs; cloud, code, file and other families are left out).
+  - 307 **Lynis** warning and suggestion messages.
+- **Input.** The check's name and description, exactly as the maintainers wrote them. At runtime the model reads a finding's title and description.
+- **Label.** Not written by a person for this project. It comes from how the maintainers filed each check, mapped to our seven actions by a rule (first match wins):
 
-Label rule, first match wins, then 5 % of rows get a random action as noise:
+  | Nuclei check | Action |
+  |---|---|
+  | has a CVE id | `PATCH_OR_UPDATE` |
+  | command-and-control, malware, backdoor or honeypot detection | `INVESTIGATE_FINDING` |
+  | in the `ssl` folder (certificates, protocols, ciphers) | `REVIEW_TLS` |
+  | tagged `ssh` in a network check, or an exposed SSH file | `HARDEN_SSH` |
+  | service detection, enumeration or an exposed admin panel | `REVIEW_SERVICE` |
+  | technology detection (software identified, nothing wrong) | `NO_ACTION_INFORMATIONAL` |
+  | web misconfiguration or exposure | `HARDEN_WEB_SERVER` |
+  | anything else (vulnerabilities without a CVE, default logins, ...) | `INVESTIGATE_FINDING` |
 
-1. `has_cve` -> `PATCH_OR_UPDATE`
-2. category `tls` -> `REVIEW_TLS`
-3. tool `nmap` -> `REVIEW_SERVICE`
-4. category `ssh` and (misconfiguration or severity above Info) -> `HARDEN_SSH`
-5. category `web` and misconfiguration -> `HARDEN_WEB_SERVER`
-6. severity Info -> `NO_ACTION_INFORMATIONAL`
-7. otherwise -> `INVESTIGATE_FINDING`
+  For Lynis, the test group decides: `ssh` -> `HARDEN_SSH`; `webservers`, `php`, `squid` -> `HARDEN_WEB_SERVER`; `crypto` -> `REVIEW_TLS`; `ports_packages` -> `PATCH_OR_UPDATE`; `insecure_services` -> `REVIEW_SERVICE`; every other group -> `INVESTIGATE_FINDING`.
 
-Method: `RandomForestClassifier`, 100 trees, depth 8. On the held-out synthetic rows: accuracy 0.960, macro precision 0.954, macro recall 0.942, macro F1 0.942.
+  Severity never decides the label on its own: Nuclei rates some real problems "info", so severity says little about what should be done.
+- **Method.** Two kinds of text features side by side: TF-IDF of words and word pairs, and TF-IDF of 3-5 letter fragments (which helps with product names and very short titles). Then `LinearSVC` with balanced class weights.
 
-**Limit.** This model learns a rule we wrote, from data we generated. Its score only shows that it recovered that rule through the noise. It says nothing about real-world performance. An action label is never treated as a command.
+Results on 2,813 checks the model did not see during training (trained on the other 8,438):
+
+| Accuracy | Macro precision | Macro recall | Macro F1 |
+|---|---|---|---|
+| 0.903 | 0.884 | 0.883 | 0.883 |
+
+Recall per action: REVIEW_SERVICE 92 %, PATCH_OR_UPDATE 95 %, HARDEN_WEB_SERVER 89 %, NO_ACTION_INFORMATIONAL 93 %, INVESTIGATE_FINDING 74 %, HARDEN_SSH 75 % (3 of 4), REVIEW_TLS 100 % (4 of 4).
+
+**Limits, stated plainly.**
+
+- **The labels are ours.** The score says how well the model recovers our labelling rule from the text of real checks. It is not a comparison with what a security expert would recommend.
+- **SSH and TLS checks are rare** in both libraries: 16 and 17 examples. Their scores rest on four test checks each, so treat them as very rough.
+- **Nikto findings are outside the training data**, because Nikto's check database may not be reused (see `data/README.md`). In the sample data the model gets two of the five Nikto items wrong: a missing X-Frame-Options header is labelled `INVESTIGATE_FINDING` and an Apache default file `NO_ACTION_INFORMATIONAL`, where `HARDEN_WEB_SERVER` would fit. The same goes for Nuclei's "HTTP Missing Security Headers" (`INVESTIGATE_FINDING`). It also labels the Lynis hardening-index score `HARDEN_SSH`. Directory listing, the outdated Apache version, the self-signed certificate, both SSH suggestions and the open ports all get a fitting action.
+- **Nmap findings are outside the training data too.** The model labels open ports `REVIEW_SERVICE`, which it learned from Nuclei's service-detection checks.
+
+An action label is never treated as a command.
+
+**Rebuilding the dataset.** Clone the two libraries, then build and retrain:
+
+```bash
+git clone --depth 1 https://github.com/projectdiscovery/nuclei-templates
+git clone --depth 1 https://github.com/CISOfy/lynis
+python -m modules.action_data nuclei-templates lynis
+python -m modules.ml_classifier
+```
 
 ---
 
@@ -472,7 +501,7 @@ python -m modules.ml_classifier
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
 - NVD lookup only knows the CVEs in the local table, which covers CVEs published from 2016 onwards. An older CVE gets no official score until its yearly feed is added (section 10).
 - The priority model is right about three times in four on unseen CVEs, and its ratings for findings that are not CVEs are unreliable. Informational findings get no priority (section 9.1).
-- The action model is trained on synthetic data and is advisory only (section 9.2).
+- The action model learns from real Nuclei and Lynis checks, but its labels come from our rule, and SSH and TLS checks are rare in the training data. Nikto and Nmap findings are outside it (section 9.2).
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
 - The exact Lynis wording for the root-login item differs between Lynis versions. The detection accepts the common forms; check it on your VM's version during the first real run.
 - `sshd -T` shows the configuration sshd would load from disk. The fix is verified by that value plus a fresh login, not by attempting a root login.

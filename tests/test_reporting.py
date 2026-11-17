@@ -46,7 +46,7 @@ def test_html_report_content(result, tmp_path):
     assert "<link" not in page and "<script" not in page and "src=" not in page   # self-contained
     for expected in ("Security Assessment Report", result["scan_id"], "127.0.0.1", result["started_at"],
                      result["finished_at"], "SAMPLE DATA", "Tool status", "Total findings: 18",
-                     "By normalized severity", "By ML priority", "Limitations", "not exhaustive", "real NVD CVE descriptions", "synthetic data"):
+                     "By normalized severity", "By ML priority", "Limitations", "not exhaustive", "real NVD CVE descriptions", "real\n     Nuclei and Lynis checks"):
         assert expected in page, expected
     for tool in schemas.TOOLS:
         assert f"<td>{tool}</td>" in page

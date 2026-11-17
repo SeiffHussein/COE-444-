@@ -1,0 +1,7 @@
+# FIXTURE: hand-written template in the Nuclei format.
+id: self-signed-ssl
+info:
+  name: Self Signed SSL Certificate
+  severity: low
+  description: The TLS certificate is self-signed.
+  tags: ssl,tls,self-signed

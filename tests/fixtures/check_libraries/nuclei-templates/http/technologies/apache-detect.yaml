@@ -1,0 +1,6 @@
+# FIXTURE: hand-written template in the Nuclei format.
+id: apache-detect
+info:
+  name: Apache HTTP Server - Detect
+  severity: info
+  tags: tech,apache,detect

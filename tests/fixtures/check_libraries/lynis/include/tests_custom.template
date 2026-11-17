@@ -1,0 +1,6 @@
+# FIXTURE: hand-written file in the format of Lynis include/tests_* files.
+    Register --test-no SSH-7408 --weight L --network NO --category security --description "Check SSH specific defined options"
+    if [ ${SKIPTEST} -eq 0 ]; then
+        ReportSuggestion "${TEST_NO}" "Consider hardening SSH configuration" "${OPTIONNAME} (set ${FOUNDVALUE} to ${EXPECTEDVALUE})" "-"
+        ReportSuggestion "${TEST_NO}" "Consider hardening SSH configuration" "second place, same message"
+    fi
