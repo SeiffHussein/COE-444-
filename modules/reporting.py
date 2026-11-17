@@ -106,7 +106,7 @@ def generate_html_report(result: dict, output_path: str) -> str:
                       f"<td>{esc(scan.get('error', ''))}</td></tr>")
     lookup = result.get("nvd", {})
     lookup_note = lookup.get("error") or (f"{lookup.get('matched', 0)} of {lookup.get('cve_findings', 0)} CVE finding(s) "
-                                          f"found in the NVD index, {lookup.get('estimated', 0)} estimated by the model")
+                                          "found in the NVD index")
     tool_rows += (f"<tr><td>NVD lookup</td><td class='st-{esc(lookup.get('status', '')).lower()}'>"
                   f"{esc(lookup.get('status', ''))}</td><td>-</td><td>-</td><td>{esc(lookup_note)}</td></tr>")
     ml = result.get("ml", {})
@@ -131,8 +131,7 @@ def generate_html_report(result: dict, output_path: str) -> str:
             if f.get("cve"):
                 official = (f"{esc(f.get('cvss_score'))} {esc(f.get('nvd_severity'))}" if f.get("nvd_severity")
                             else "(CVE not in the local NVD index)")
-                nvd_row = (f"  <tr><th>NVD CVSS (official)</th><td>{official}</td><th>ML CVSS estimate</th>"
-                           f"<td>{esc(f.get('ml_cvss_estimate') or '(not estimated)')}</td></tr>\n")
+                nvd_row = f"  <tr><th>NVD CVSS (official)</th><td colspan='3'>{official}</td></tr>\n"
             blocks += f"""
 <div class="finding">
  <h3><span class="pill sev-{esc(f.get('severity', 'Info')).lower()}">{esc(f.get('severity'))}</span> {esc(f.get('title'))}</h3>
@@ -140,7 +139,7 @@ def generate_html_report(result: dict, output_path: str) -> str:
   <tr><th>Tool</th><td>{esc(f.get('source'))}</td><th>Port / service</th><td>{port}</td></tr>
   <tr><th>Original severity</th><td>{esc(f.get('original_severity') or '(none given by tool)')}</td>
       <th>Normalized severity</th><td>{esc(f.get('severity'))}</td></tr>
-  <tr><th>ML priority</th><td>{esc(f.get('ml_priority') or '(not classified)')}</td>
+  <tr><th>ML priority</th><td>{esc(f.get('ml_priority') or ('(not rated: informational finding)' if f.get('ml_action') else '(not classified)'))}</td>
       <th>ML action</th><td>{esc(f.get('ml_action') or '(not classified)')}</td></tr>
   <tr><th>CVE</th><td>{esc(f.get('cve') or '-')}</td><th>Check ID</th><td>{esc(f.get('check_id') or '-')}</td></tr>
 {nvd_row} </table>
@@ -218,11 +217,12 @@ Authorized lab use only.</p>
  <li>The scans are not exhaustive: Nmap checks only the top {esc(config.NMAP_TOP_PORTS)} TCP ports, Nuclei and Nikto
      run non-intrusive checks only, and a tool that failed or was skipped contributed nothing.
      The absence of a finding does not prove the absence of a vulnerability.</li>
- <li>ML priority and ML action are advisory. Both models were trained on synthetic data labelled by
-     hand-written rules, so their accuracy says nothing about real-world performance.</li>
- <li>CVSS scores come from a local copy of NVD data and are only as complete and current as the feed files
-     it was built from. The ML CVSS estimate is a text model trained on real NVD descriptions; it is right
-     about two times in three and is shown only for findings that carry a CVE id.</li>
+ <li>ML priority and ML action are advisory. The priority model was trained on real NVD CVE descriptions
+     and is right about two times in three on unseen CVEs. Findings that are not CVEs (Lynis and Nikto items)
+     are outside what it was trained on, so their priority is much less reliable. Informational findings
+     are not rated. The action model was trained on synthetic data labelled by a hand-written rule.</li>
+ <li>Official CVSS scores come from a local copy of NVD data and are only as complete and current as the
+     feed files it was built from.</li>
  <li>Nikto does not rate its findings; their severity is estimated from keywords.</li>
  <li>Recommendations are general guidance and must be reviewed by a person before being applied.</li>
 </ul>

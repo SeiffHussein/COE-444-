@@ -5,31 +5,20 @@ Source: the NVD "JSON 2.0" CVE data feeds, https://nvd.nist.gov/vuln/data-feeds
 (public data published by NIST). The feed files are downloaded by hand - this
 module never contacts the internet.
 
-It does three things:
-
 1. BUILD AN INDEX   build_index(feed files) -> data/nvd_cves.csv.gz
        One row per CVE: id, published date, CVSS version/score/severity/vector,
        CWE and the English description. Rejected CVEs are left out.
+       This table is also the TRAINING DATA of the priority model
+       (modules/ml_classifier.py).
 
 2. LOOK UP          enrich_findings(findings)
        For every finding whose scanner reported a CVE id, copy the OFFICIAL
        CVSS score and severity from the index (cvss_score, nvd_severity).
        A CVE that is not in the index gets nothing - a score is never invented.
 
-3. ESTIMATE         train_severity_model() / enrich_findings(findings)
-       A text model (TF-IDF words -> RandomForest) trained on the real NVD
-       descriptions predicts the CVSS severity from a description. It is used
-       ONLY for findings that carry a CVE id, as ml_cvss_estimate. This is
-       useful when the CVE is missing from the index, and it lets the report
-       show "official NVD severity" next to "model estimate".
-
-       Why only CVE findings? The model has only ever seen CVE descriptions.
-       On other text (an open port, a missing header) its output is
-       meaningless, so we do not show one.
-
 Command line:
-    python -m modules.nvd                       train the model from the existing index
-    python -m modules.nvd FEED.json.zip ...     rebuild the index from feed files, then train
+    python -m modules.nvd FEED.json.zip ...     rebuild the index from feed files
+    (then retrain the priority model:  python -m modules.ml_classifier)
 """
 
 from __future__ import annotations
@@ -42,14 +31,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-import joblib
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import make_pipeline
-
 import config
-from modules.ml_classifier import evaluate_predictions, format_metrics
 from schemas import CVSS_SEVERITIES
 
 INDEX_COLUMNS: tuple[str, ...] = ("cve_id", "published", "cvss_version", "cvss_score",
@@ -173,110 +155,35 @@ def load_index() -> dict[str, dict]:
     return _index_cache[key]
 
 
-# ====================================================================== 3. the severity model
-def train_severity_model() -> dict:
-    """Train the description -> CVSS severity model on the NVD index, save it, reload it.
-
-    Returns the metrics dict (same shape as ml_classifier's). Evaluated on a
-    held-out 25 % of REAL CVEs the model never saw.
-
-    Raises:
-        RuntimeError: index missing, or too few rated CVEs to train on.
-    """
-    rows = [r for r in load_index().values() if r["cvss_severity"] in CVSS_SEVERITIES and r["description"]]
-    counts = {label: sum(r["cvss_severity"] == label for r in rows) for label in CVSS_SEVERITIES}
-    if min(counts.values()) < 4:
-        raise RuntimeError(f"Not enough rated CVEs in the NVD index to train on: {counts}")
-    texts, labels = [r["description"] for r in rows], [r["cvss_severity"] for r in rows]
-    X_train, X_test, y_train, y_test = train_test_split(
-        texts, labels, test_size=config.ML_TEST_SIZE, random_state=config.RANDOM_SEED, stratify=labels)
-
-    model = make_pipeline(
-        # words and word pairs -> numbers (how characteristic each word is for a description)
-        TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words="english", sublinear_tf=True),
-        RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=config.RANDOM_SEED),
-    )
-    model.fit(X_train, y_train)
-    metrics = evaluate_predictions(y_test, model.predict(X_test), CVSS_SEVERITIES, len(X_train))
-
-    path = Path(config.NVD_MODEL_PATH)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump({"model": model, "labels": list(CVSS_SEVERITIES), "metrics": metrics}, path, compress=3)
-    if not set(joblib.load(path)["model"].predict(X_test[:5])) <= set(CVSS_SEVERITIES):
-        raise RuntimeError("Reloaded NVD model predicted unknown labels.")
-    return metrics
-
-
-def load_severity_model() -> dict:
-    """Load the saved model bundle. Raises RuntimeError if missing or unreadable."""
-    path = Path(config.NVD_MODEL_PATH)
-    if not path.exists():
-        raise RuntimeError(f"Model file {path.name} is missing. Train it with: python -m modules.nvd")
-    try:
-        bundle = joblib.load(path)
-        bundle["model"], bundle["labels"]
-    except Exception as exc:
-        raise RuntimeError(f"Model file {path.name} could not be loaded: {exc}") from exc
-    return bundle
-
-
-def model_metrics() -> dict:
-    """Metrics stored with the saved model ({} if it is not available)."""
-    try:
-        return load_severity_model().get("metrics", {})
-    except RuntimeError:
-        return {}
-
-
-# ====================================================================== 2. enrich findings
+# ====================================================================== 2. look up
 def enrich_findings(findings: list[dict]) -> tuple[list[dict], dict]:
-    """Add NVD data to findings that carry a CVE id. Never raises.
+    """Add official NVD values to findings that carry a CVE id. Never raises.
 
     Returns:
-        (findings, status). `findings` are copies; only cvss_score, nvd_severity
-        and ml_cvss_estimate may be filled in, and only for findings with a CVE.
+        (findings, status). `findings` are copies; only cvss_score and
+        nvd_severity may be filled in, and only for findings with a CVE.
         status = {"status": "SUCCESS" | "FAILED" | "SKIPPED", "error": str,
-                  "cve_findings": int, "matched": int, "estimated": int}
-
-        Index missing -> no official values. Model missing -> no estimates.
-        Either problem is reported in status["error"]; nothing is made up.
+                  "cve_findings": int, "matched": int}
+        Index missing or unreadable -> FAILED, findings unchanged.
     """
     findings = [dict(f) for f in findings]
     with_cve = [f for f in findings if str(f.get("cve", "")).strip()]
-    status = {"status": "SKIPPED", "error": "", "cve_findings": len(with_cve), "matched": 0, "estimated": 0}
+    status = {"status": "SKIPPED", "error": "", "cve_findings": len(with_cve), "matched": 0}
     if not with_cve:
         status["error"] = "No finding carries a CVE id."
         return findings, status
-
-    problems = []
-    # ---- official values from the index
     try:
         index = load_index()
-        for finding in with_cve:
-            rated = [index[c] for c in _cve_ids(finding) if c in index and index[c]["cvss_severity"]]
-            if rated:                                   # several CVEs on one finding -> the highest score
-                worst = max(rated, key=lambda row: float(row["cvss_score"]))
-                finding["cvss_score"], finding["nvd_severity"] = float(worst["cvss_score"]), worst["cvss_severity"]
-                status["matched"] += 1
-    except Exception as exc:
-        problems.append(f"NVD lookup unavailable: {exc}")
-
-    # ---- model estimate from the finding's own description
-    try:
-        model = load_severity_model()["model"]
-        predictions = model.predict([f"{f.get('title', '')}. {f.get('description', '')}" for f in with_cve])
-        if not set(predictions) <= set(CVSS_SEVERITIES):
-            raise RuntimeError("the model predicted a label outside the CVSS severities.")
-        for finding, label in zip(with_cve, predictions):
-            finding["ml_cvss_estimate"] = str(label)
-        status["estimated"] = len(with_cve)
-    except Exception as exc:
-        for finding in with_cve:
-            finding["ml_cvss_estimate"] = ""
-        problems.append(f"NVD severity model unavailable: {exc}")
-
-    status["status"] = "FAILED" if problems else "SUCCESS"
-    status["error"] = " ".join(problems)
+    except RuntimeError as exc:
+        status.update(status="FAILED", error=f"NVD lookup unavailable: {exc}")
+        return findings, status
+    for finding in with_cve:
+        rated = [index[c] for c in _cve_ids(finding) if c in index and index[c]["cvss_severity"]]
+        if rated:                                       # several CVEs on one finding -> the highest score
+            worst = max(rated, key=lambda row: float(row["cvss_score"]))
+            finding["cvss_score"], finding["nvd_severity"] = float(worst["cvss_score"]), worst["cvss_severity"]
+            status["matched"] += 1
+    status["status"] = "SUCCESS"
     return findings, status
 
 
@@ -285,9 +192,7 @@ def _cve_ids(finding: dict) -> list[str]:
 
 
 if __name__ == "__main__":
-    if sys.argv[1:]:
-        print(f"Index built: {build_index(list(sys.argv[1:]))} CVEs -> {config.NVD_INDEX_PATH}")
-    print(format_metrics("NVD severity", train_severity_model()))
-    print(f"\nModel saved: {config.NVD_MODEL_PATH}")
-    print("NOTE: measured on real NVD CVEs the model did not see during training. It applies to")
-    print("      CVE descriptions only, and the result depends on which feed files were used.")
+    if not sys.argv[1:]:
+        raise SystemExit("Usage: python -m modules.nvd FEED_FILE [FEED_FILE ...]")
+    print(f"Index built: {build_index(list(sys.argv[1:]))} CVEs -> {config.NVD_INDEX_PATH}")
+    print("Now retrain the priority model on it:  python -m modules.ml_classifier")

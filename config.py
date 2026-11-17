@@ -28,8 +28,8 @@ PRIORITY_MODEL_PATH = MODELS_DIR / "priority_model.joblib"
 ACTION_MODEL_PATH = MODELS_DIR / "action_model.joblib"
 # NVD (National Vulnerability Database) data - see modules/nvd.py
 NVD_FEEDS_DIR = DATA_DIR / "nvd_feeds"                  # downloaded feed files (git-ignored, large)
-NVD_INDEX_PATH = DATA_DIR / "nvd_cves.csv.gz"           # compact CVE table built from the feeds
-NVD_MODEL_PATH = MODELS_DIR / "nvd_severity_model.joblib"
+NVD_INDEX_PATH = DATA_DIR / "nvd_cves.csv.gz"           # compact CVE table built from the feeds;
+                                                        # also the training data of the priority model
 # Labelled sample tool output, used by the tests AND by sample mode.
 FIXTURES_DIR = BASE_DIR / "tests" / "fixtures"
 FIXTURE_HOST = "192.0.2.10"   # documentation-only address used inside the fixtures
@@ -81,7 +81,3 @@ NIKTO_MAX_TIME = "300s"       # nikto -maxtime value
 RANDOM_SEED = 42
 ML_TEST_SIZE = 0.25
 SYNTHETIC_ROWS = 600
-# Two ML features describe the ASSET, not the finding. Scanners cannot know
-# them, so they are stated here for the lab VM.
-ASSET_INTERNET_FACING = 0     # 0 = internal lab VM, 1 = reachable from the internet
-ASSET_CRITICALITY = 2         # 1 = low, 2 = normal, 3 = business critical

@@ -14,7 +14,7 @@ Combined result (a plain dict):
     started_at / finished_at / duration_s
     scans          {"nmap": ScanResult, "nuclei": ..., "nikto": ..., "lynis": ...}
     findings       merged findings of all tools (with ML fields and recommendations)
-    nvd            NVD lookup status: {"status", "error", "cve_findings", "matched", "estimated"}
+    nvd            NVD lookup status: {"status", "error", "cve_findings", "matched"}
     ml             {"status": "SUCCESS" | "FAILED" | "SKIPPED", "error": str}
     errors         every problem as readable text (empty list = no problems)
     remediation    None, or the outcome dict of remediation.apply_fix()
@@ -53,7 +53,7 @@ def run_assessment(target: str, sample_mode: bool = True, options: dict | None =
         "started_at": started_at, "finished_at": started_at, "duration_s": 0.0,
         "scans": {},
         "findings": [],
-        "nvd": {"status": "SKIPPED", "error": "Assessment did not run.", "cve_findings": 0, "matched": 0, "estimated": 0},
+        "nvd": {"status": "SKIPPED", "error": "Assessment did not run.", "cve_findings": 0, "matched": 0},
         "ml": {"status": "SKIPPED", "error": "Assessment did not run."},
         "errors": [],
         "remediation": None,

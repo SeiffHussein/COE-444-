@@ -21,7 +21,7 @@ from unittest import mock
 import config
 from modules import (host_auditor, ml_classifier, nvd, orchestrator, remediation, reporting,
                      target_scanner, tool_utils, vulnerability_scanner)
-from schemas import new_finding
+from schemas import ML_PRIORITIES, new_finding
 
 LAB_HOST = config.FIXTURE_HOST
 
@@ -151,8 +151,8 @@ def t08():
 
 def t09():
     finding = next(f for f in real_assessment()["findings"] if f["cve"])
-    return f"{finding['original_severity']} -> {finding['severity']}, ml_priority={finding['ml_priority']}, " \
-           f"ml_action={finding['ml_action']}"
+    return f"{finding['original_severity']} -> {finding['severity']}, ml_priority is a valid label=" \
+           f"{finding['ml_priority'] in ML_PRIORITIES}, ml_action={finding['ml_action']}"
 
 
 def t10():
@@ -214,10 +214,13 @@ def t18():
 
 
 def t19():
-    port = new_finding(LAB_HOST, "nmap", "Open port 22/tcp (ssh)", port=22, service="ssh")
-    cve = new_finding(LAB_HOST, "nuclei", "Apache path traversal", cve="CVE-2021-41773", severity="Critical")
-    (port, cve), _ = nvd.enrich_findings([port, cve])
-    return f"open port estimate='{port['ml_cvss_estimate']}', CVE finding has estimate={bool(cve['ml_cvss_estimate'])}"
+    metrics = ml_classifier.model_metrics()["priority"]
+    result = orchestrator.run_assessment("127.0.0.1", sample_mode=True)
+    info = [f for f in result["findings"] if f["severity"] == "Info"]
+    rest = [f for f in result["findings"] if f["severity"] != "Info"]
+    return f"trained on real NVD data={'real NVD' in metrics['training_data']}, " \
+           f"Info findings rated={sum(bool(f['ml_priority']) for f in info)} of {len(info)}, " \
+           f"other findings rated={sum(bool(f['ml_priority']) for f in rest)} of {len(rest)}"
 
 
 SCENARIOS = [
@@ -232,7 +235,7 @@ SCENARIOS = [
      "nuclei=FAILED, other tools with findings=['lynis', 'nikto', 'nmap']", t07),
     ("T08", "Lynis over SSH: key rejected by the VM", "FAILED: Could not run Lynis. SSH ", t08),
     ("T09", "Nuclei CVE finding: severity normalized + ML labels",
-     "critical -> Critical, ml_priority=CRITICAL, ml_action=PATCH_OR_UPDATE", t09),
+     "critical -> Critical, ml_priority is a valid label=True, ml_action=PATCH_OR_UPDATE", t09),
     ("T10", "ML model file missing -> findings unchanged, no fake prediction", "ml=FAILED, findings kept=18, predictions=0", t10),
     ("T11", "HTML report escapes scanner-controlled text", "raw script tag in report=False, escaped=True", t11),
     ("T12", "Fix without approval -> nothing happens", "applied=False, verified=False, file written=False, reloaded=False", t12),
@@ -243,8 +246,8 @@ SCENARIOS = [
     ("T17", "Simulation mode sends nothing to the VM", "simulated=True, applied=False, commands sent to VM=0", t17),
     ("T18", "NVD lookup: official CVSS for a known CVE, nothing invented for an unknown one",
      "known CVE -> 9.8 CRITICAL, CVE not in index -> None '', found 1 of 2", t18),
-    ("T19", "NVD-trained model is applied to CVE findings only",
-     "open port estimate='', CVE finding has estimate=True", t19),
+    ("T19", "Priority model: trained on real NVD data; informational findings are not rated",
+     "trained on real NVD data=True, Info findings rated=0 of 6, other findings rated=12 of 12", t19),
 ]
 
 
@@ -256,11 +259,9 @@ def main() -> int:
          mock.patch.object(config, "PRIORITY_MODEL_PATH", Path(model_folder) / "priority.joblib"), \
          mock.patch.object(config, "ACTION_MODEL_PATH", Path(model_folder) / "action.joblib"), \
          mock.patch.object(config, "NVD_INDEX_PATH", Path(model_folder) / "nvd_cves.csv.gz"), \
-         mock.patch.object(config, "NVD_MODEL_PATH", Path(model_folder) / "nvd.joblib"), \
          mock.patch("subprocess.run", side_effect=AssertionError("demo must not run real programs")):
-        ml_classifier.train_models()
         nvd.build_index([config.FIXTURES_DIR / "nvd_feed_sample.json"])    # real 82-CVE excerpt of the NVD feed
-        nvd.train_severity_model()
+        ml_classifier.train_models()
         rows = []
         for test_id, scenario, expected, run in SCENARIOS:
             try:

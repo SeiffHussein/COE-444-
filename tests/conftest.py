@@ -41,21 +41,20 @@ def block_subprocess(monkeypatch):
 
 @pytest.fixture(scope="session")
 def trained_model_dir(tmp_path_factory):
-    """Train both models once, into a temporary folder."""
+    """Build a small NVD index and train both models once, into a temporary folder."""
     folder = tmp_path_factory.mktemp("models")
     original = (config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH)
-    original_nvd = (config.NVD_INDEX_PATH, config.NVD_MODEL_PATH)
+    original_nvd = config.NVD_INDEX_PATH
     config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH = folder / "priority.joblib", folder / "action.joblib"
-    config.NVD_INDEX_PATH, config.NVD_MODEL_PATH = folder / "nvd_cves.csv.gz", folder / "nvd.joblib"
+    config.NVD_INDEX_PATH = folder / "nvd_cves.csv.gz"
     try:
-        metrics = ml_classifier.train_models()
-        # small NVD index + model built from the real 82-CVE excerpt in tests/fixtures
+        # small NVD index built from the real 82-CVE excerpt in tests/fixtures; the priority model trains on it
         nvd_count = nvd.build_index([FIXTURES / "nvd_feed_sample.json"])
-        nvd_metrics = nvd.train_severity_model()
+        metrics = ml_classifier.train_models()
     finally:
         config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH = original
-        config.NVD_INDEX_PATH, config.NVD_MODEL_PATH = original_nvd
-    return SimpleNamespace(folder=folder, metrics=metrics, nvd_count=nvd_count, nvd_metrics=nvd_metrics)
+        config.NVD_INDEX_PATH = original_nvd
+    return SimpleNamespace(folder=folder, metrics=metrics, nvd_count=nvd_count)
 
 
 @pytest.fixture(autouse=True)
@@ -68,4 +67,3 @@ def lab_config(monkeypatch, trained_model_dir):
     monkeypatch.setattr(config, "PRIORITY_MODEL_PATH", trained_model_dir.folder / "priority.joblib")
     monkeypatch.setattr(config, "ACTION_MODEL_PATH", trained_model_dir.folder / "action.joblib")
     monkeypatch.setattr(config, "NVD_INDEX_PATH", trained_model_dir.folder / "nvd_cves.csv.gz")
-    monkeypatch.setattr(config, "NVD_MODEL_PATH", trained_model_dir.folder / "nvd.joblib")

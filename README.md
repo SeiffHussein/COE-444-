@@ -62,12 +62,12 @@ modules/
   vulnerability_scanner.py  Nuclei (JSONL) and Nikto (JSON)
   host_auditor.py           Lynis over SSH (report file)
   orchestrator.py           the pipeline
-  ml_classifier.py          dataset generator, training, prediction
-  nvd.py                    NVD feed -> CVE index, CVE lookup, NVD-trained severity model
+  ml_classifier.py          priority model (real NVD data), action model (synthetic data)
+  nvd.py                    NVD feed -> CVE table, CVE lookup
   remediation.py            recommendations + the one automatic fix
   reporting.py              CSV / HTML
-data/synthetic_findings.csv synthetic training data (600 rows, fixed seed)
-data/nvd_cves.csv.gz        real CVE data built from the NVD feed (10,555 CVEs)
+data/nvd_cves.csv.gz        real CVE data built from the NVD feed (10,555 CVEs): priority model training data
+data/synthetic_findings.csv synthetic training data for the action model (600 rows, fixed seed)
 models/                     trained models (*.joblib, git-ignored, rebuilt by one command)
 reports/                    generated reports (git-ignored)
 tests/                      pytest suite; tests/fixtures/ = labelled sample tool output
@@ -86,7 +86,6 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python -m modules.ml_classifier
-python -m modules.nvd
 python -m pytest -q
 python -m streamlit run app.py
 ```
@@ -98,14 +97,13 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m modules.ml_classifier
-python -m modules.nvd
 python -m pytest -q
 python -m streamlit run app.py
 ```
 
 If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-`python -m modules.ml_classifier` trains the priority and action models (about one second) and `python -m modules.nvd` trains the NVD severity model (about ten seconds), all into `models/`. The model files are not stored in Git, so these steps are needed once after cloning. Without them the app still works and shows an "unavailable" message for the missing model.
+`python -m modules.ml_classifier` trains the two ML models into `models/` (about ten seconds). The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
 
 ---
 
@@ -226,8 +224,8 @@ Everything is in `config.py`. The lab values can also be set with environment va
 | `ALLOW_AUTO_REMEDIATION` | `COE444_ALLOW_REMEDIATION=1` | master switch for the one fix (default off) |
 | `AUTHORIZED_TARGETS` | - | `127.0.0.1` plus `VM_IP`. Nothing else is ever scanned. |
 | `NMAP_TOP_PORTS`, `NUCLEI_RATE_LIMIT`, `NIKTO_MAX_TIME`, `TOOL_TIMEOUTS` | - | scan limits and timeouts |
-| `ASSET_INTERNET_FACING`, `ASSET_CRITICALITY` | - | two ML features that describe the VM itself |
 | `RANDOM_SEED`, `SYNTHETIC_ROWS` | - | ML reproducibility |
+| `NVD_INDEX_PATH`, `NVD_FEEDS_DIR` | - | the CVE table and the folder for downloaded feeds |
 
 macOS example:
 
@@ -309,9 +307,8 @@ Defined in `schemas.py`. Every module exchanges plain dicts in these shapes.
 | `cve` | str | CVE id(s), only if the tool reported them |
 | `cvss_score` | float or None | official CVSS base score from NVD, if the CVE is in the local index |
 | `nvd_severity` | str | official NVD severity: empty, or `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
-| `ml_cvss_estimate` | str | model's estimate of the CVSS severity; only for findings with a CVE |
 | `check_id` | str | Nuclei template id, Nikto test id or Lynis test id |
-| `ml_priority` | str | empty, or `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
+| `ml_priority` | str | `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`; empty for Info findings, which are not rated |
 | `ml_action` | str | empty, or one of the action labels below |
 | `recommendation` | str | human-readable advice |
 | `remediation_supported` | bool | true only for the SSH root-login finding |
@@ -341,7 +338,7 @@ Unknown values are `None` or `""`. A CVE, port or service is never invented.
 ```
 {"scan_id", "target", "is_sample", "authorized", "started_at", "finished_at", "duration_s",
  "scans": {"nmap": ScanResult, "nuclei": ..., "nikto": ..., "lynis": ...},
- "findings": [...], "nvd": {"status", "error", "cve_findings", "matched", "estimated"},
+ "findings": [...], "nvd": {"status", "error", "cve_findings", "matched"},
  "ml": {"status", "error"}, "errors": [...], "remediation": None or outcome}
 ```
 
@@ -351,11 +348,39 @@ Unknown values are `None` or `""`. A CVE, port or service is never invented.
 
 ## 9. Machine learning: method and limits
 
-This section covers the priority and action models. The third model, trained on real NVD data, is described in section 10.
+The scanners find the issues. Two models only add advice: how urgent a finding is (`ml_priority`) and what kind of action fits (`ml_action`). At runtime only those two fields are filled in. If a model file is missing or broken, the findings are returned unchanged with an ML error. A prediction is never faked.
 
-**What it does.** The scanners find the issues. Two `RandomForestClassifier` models only suggest how urgent a finding is (`ml_priority`) and what kind of action fits (`ml_action`). At runtime only those two fields are filled in. If a model file is missing or broken, the findings are returned unchanged with an ML error. A prediction is never faked.
+| Model | Predicts | Training data | Input |
+|---|---|---|---|
+| Priority | `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` | **real** NVD CVE records | text of the description |
+| Action | one of 7 action labels | **synthetic** findings | 5 simple features |
 
-**Features** (chosen to be easy to explain)
+Train both with `python -m modules.ml_classifier`. It prints accuracy, macro precision/recall/F1 and a confusion matrix for each model, saves them under `models/`, then reloads each file and checks that it predicts valid labels. Both use a stratified 75/25 split and `config.RANDOM_SEED`.
+
+### 9.1 Priority model: real data
+
+- **Data.** The CVE table built from the NVD feed (section 10): 10,270 CVEs that have a CVSS rating.
+- **Input and label.** Input is the English description of a CVE. The label is the CVSS severity NVD assigned to it. Nothing is synthetic and we wrote no labelling rule.
+- **Method.** TF-IDF turns the text into numbers (a weight for each of the 5,000 most useful words and word pairs). A `RandomForestClassifier` with 100 trees learns which words go with which severity.
+- **At runtime.** The model reads a finding's title and description and returns a priority.
+
+Results on 2,568 real CVEs the model did not see during training:
+
+| Accuracy | Macro precision | Macro recall | Macro F1 |
+|---|---|---|---|
+| 0.672 | 0.600 | 0.549 | 0.565 |
+
+For comparison, always answering the most common class (HIGH) would score 0.45. The model is weakest on the two rare classes, LOW (34 % recall) and CRITICAL (42 % recall). Most mistakes are one level off.
+
+**Limits, stated plainly.**
+
+- The score above is for CVE descriptions. Findings that are not CVEs (Lynis suggestions, Nikto messages) are outside what the model was trained on. In the sample data it rates all of them MEDIUM, which is its fallback answer when it recognises nothing. Treat the priority of a non-CVE finding as a weak hint.
+- NVD has no "informational" class, so the model cannot say "this is not a vulnerability". Findings the scanner itself rates Info (open ports, service detections, the hardening index) are therefore **not rated**: their `ml_priority` stays empty.
+- The training data is one feed file covering mostly 2026 CVEs. More feeds would likely improve it (section 10).
+
+### 9.2 Action model: synthetic data
+
+NVD has no "what should be done" label, so this model still learns from `data/synthetic_findings.csv`: 600 rows generated with a fixed seed, covering all four tools and every action.
 
 | Feature | Values | Source |
 |---|---|---|
@@ -364,65 +389,44 @@ This section covers the priority and action models. The third model, trained on 
 | `has_cve` | 0/1 | the tool reported a CVE |
 | `category` | ssh / web / tls / other / none | port, service and keywords |
 | `is_misconfiguration` | 0/1 | Lynis warning/suggestion, or configuration keywords, and no CVE |
-| `internet_facing` | 0/1 | `config.ASSET_INTERNET_FACING` |
-| `asset_criticality` | 1-3 | `config.ASSET_CRITICALITY` |
 
-**Synthetic dataset.** `data/synthetic_findings.csv`: 600 rows generated with `config.RANDOM_SEED`, covering all four tools and every class. Each row imitates what a tool could plausibly report (Nmap rows are always Info with no CVE, for example).
+Label rule, first match wins, then 5 % of rows get a random action as noise:
 
-**Label rules** (written by us, then a little noise is added)
+1. `has_cve` -> `PATCH_OR_UPDATE`
+2. category `tls` -> `REVIEW_TLS`
+3. tool `nmap` -> `REVIEW_SERVICE`
+4. category `ssh` and (misconfiguration or severity above Info) -> `HARDEN_SSH`
+5. category `web` and misconfiguration -> `HARDEN_WEB_SERVER`
+6. severity Info -> `NO_ACTION_INFORMATIONAL`
+7. otherwise -> `INVESTIGATE_FINDING`
 
-- Priority: `points = 2*severity_score + 2*has_cve + 2*internet_facing + (asset_criticality - 1) + 1 if (is_misconfiguration and severity_score >= 2)`. `CRITICAL` if points >= 10, `HIGH` if >= 7, `MEDIUM` if >= 4, otherwise `LOW`. Then 8 % of rows are moved one level up or down.
-- Action, first matching rule wins:
-  1. `has_cve` -> `PATCH_OR_UPDATE`
-  2. category `tls` -> `REVIEW_TLS`
-  3. tool `nmap` -> `REVIEW_SERVICE`
-  4. category `ssh` and (misconfiguration or severity above Info) -> `HARDEN_SSH`
-  5. category `web` and misconfiguration -> `HARDEN_WEB_SERVER`
-  6. severity Info -> `NO_ACTION_INFORMATIONAL`
-  7. otherwise -> `INVESTIGATE_FINDING`
+Method: `RandomForestClassifier`, 100 trees, depth 8. On the held-out synthetic rows: accuracy 0.960, macro precision 0.954, macro recall 0.942, macro F1 0.942.
 
-  Then 5 % of rows get a random action.
-
-Because priority also depends on CVE, exposure and asset criticality, it is not a copy of severity: two findings with the same severity can get different priorities.
-
-**Training.** `python -m modules.ml_classifier` (add `--regenerate` to rebuild the CSV first). Stratified 75/25 split, 100 trees, depth 8. It prints accuracy, macro precision/recall/F1 and a confusion matrix for each model, saves each model with its feature order and labels under `models/`, then reloads the file and checks that it predicts valid labels.
-
-Results on the held-out synthetic rows with the committed dataset:
-
-| Model | Accuracy | Macro precision | Macro recall | Macro F1 |
-|---|---|---|---|---|
-| Priority | 0.893 | 0.864 | 0.844 | 0.853 |
-| Action | 0.947 | 0.947 | 0.949 | 0.947 |
-
-**Limits, stated plainly.** The models learn rules we wrote ourselves, from data we generated. These scores only show that the models recovered those rules through the noise. They say **nothing** about real-world performance. Real use would need findings labelled by security analysts. The ML output is advisory and is never treated as a command.
+**Limit.** This model learns a rule we wrote, from data we generated. Its score only shows that it recovered that rule through the noise. It says nothing about real-world performance. An action label is never treated as a command.
 
 ---
 
 ## 10. NVD data
 
-The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. All of this lives in `modules/nvd.py`. The app never contacts NVD itself; feed files are downloaded by hand.
+The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. The app never contacts NVD itself; feed files are downloaded by hand and processed by `modules/nvd.py`.
 
 **What is in the repo.** `data/nvd_cves.csv.gz` is a compact table built from the NVD "modified" feed of 17 November 2026: 10,555 CVEs (rejected ones removed), of which 10,270 have a CVSS rating. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. The "modified" feed holds only recently added or changed CVEs, so most entries are from 2026.
 
-**Use 1: CVE lookup.** When a scanner reports a CVE id, the official CVSS score and severity are copied onto the finding (`cvss_score`, `nvd_severity`). If a finding lists several CVEs, the highest score is used. A CVE that is not in the local table gets nothing; a score is never guessed. The tool's own severity is not changed.
+The table has two uses:
 
-**Use 2: a model trained on real data.** A text model learns to predict the CVSS severity from a CVE description: TF-IDF (word and word-pair weights, 5,000 features) into a `RandomForestClassifier` with 100 trees. The label is NVD's own severity, so nothing here is synthetic. Stratified 75/25 split.
+1. **Training data** for the priority model (section 9.1).
+2. **CVE lookup.** When a scanner reports a CVE id, the official CVSS score and severity are copied onto the finding (`cvss_score`, `nvd_severity`). If a finding lists several CVEs, the highest score is used. A CVE that is not in the table gets nothing; a score is never guessed. The tool's own severity is not changed.
 
-| Model | Train / test rows | Accuracy | Macro precision | Macro recall | Macro F1 |
-|---|---|---|---|---|---|
-| NVD severity | 7,702 / 2,568 | 0.672 | 0.600 | 0.549 | 0.565 |
+For a CVE finding the report therefore shows the official NVD rating (when the CVE is in the table) next to the model's `ml_priority`.
 
-For comparison, always answering the most common class (HIGH) would score 0.45. The model is weakest on LOW (34 % recall) and CRITICAL (42 % recall), which are the two rare classes; most mistakes are one level off.
-
-**Where the model is used, and why only there.** Its output is `ml_cvss_estimate`, filled in only for findings that carry a CVE id. It is useful when the CVE is missing from the local table, and when the CVE is present the report shows the official value next to the estimate. It is deliberately **not** used for other findings. The model has only seen CVE descriptions; when we tried it on other text it rated a missing security header CRITICAL and an open SSH port HIGH. That is also why it did not replace the priority model.
-
-**Adding more data.** For wider lookup coverage, download yearly feeds (for example `nvdcve-2.0-2021.json.gz`) from the NVD page into `data/nvd_feeds/` (git-ignored), then rebuild and retrain:
+**Adding more data.** For wider lookup coverage and more training data, download yearly feeds (for example `nvdcve-2.0-2021.json.gz`) from the NVD page into `data/nvd_feeds/` (git-ignored), then rebuild the table and retrain:
 
 ```bash
 python -m modules.nvd data/nvd_feeds/*
+python -m modules.ml_classifier
 ```
 
-`.json`, `.json.gz` and `.zip` files are accepted. If a CVE appears in several files, the last file wins. The accuracy figures above will change with the data used.
+`.json`, `.json.gz` and `.zip` files are accepted. If a CVE appears in several files, the last file wins. The accuracy figures in section 9.1 will change with the data used.
 
 ---
 
@@ -455,8 +459,8 @@ python -m modules.nvd data/nvd_feeds/*
 - Scans are not exhaustive: top 100 TCP ports only, no UDP, non-intrusive templates only. No finding does not mean no vulnerability.
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
 - NVD lookup only knows the CVEs in the local table, which currently covers recent CVEs only. Older ones, such as the Apache CVE in the sample data, are not found until more feeds are added (section 10).
-- The NVD severity model is right about two times in three and applies to CVE findings only.
-- The priority and action models are trained on synthetic data and are advisory only (section 9). The asset features come from `config.py`, so they are the same for every finding of a run.
+- The priority model is right about two times in three on unseen CVEs and is much less reliable for findings that are not CVEs. Informational findings get no priority (section 9.1).
+- The action model is trained on synthetic data and is advisory only (section 9.2).
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
 - The exact Lynis wording for the root-login item differs between Lynis versions. The detection accepts the common forms; check it on your VM's version during the first real run.
 - `sshd -T` shows the configuration sshd would load from disk. The fix is verified by that value plus a fresh login, not by attempting a root login.

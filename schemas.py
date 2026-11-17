@@ -20,10 +20,9 @@ Two plain-dict shapes are exchanged between modules:
     cve                    str         ""        CVE id(s), only if the tool reported them
     cvss_score             float|None  None      official CVSS base score from NVD (nvd.py only)
     nvd_severity           str         ""        official NVD severity, "" or one of CVSS_SEVERITIES
-    ml_cvss_estimate       str         ""        ML ESTIMATE of the CVSS severity for a CVE finding
-                                                 (model trained on real NVD data; nvd.py only)
     check_id               str         ""        tool's own id (Nuclei template, Lynis test)
-    ml_priority            str         ""        "" or one of ML_PRIORITIES (ml_classifier only)
+    ml_priority            str         ""        "" or one of ML_PRIORITIES (ml_classifier only;
+                                                 model trained on real NVD data; "" for Info findings)
     ml_action              str         ""        "" or one of ML_ACTIONS    (ml_classifier only)
     recommendation         str         ""        human-readable advice (remediation only)
     remediation_supported  bool        False     True only for the SSH root-login finding
@@ -140,7 +139,6 @@ class Finding:
     cve: str = ""
     cvss_score: float | None = None
     nvd_severity: str = ""
-    ml_cvss_estimate: str = ""
     check_id: str = ""
     ml_priority: str = ""
     ml_action: str = ""
@@ -162,9 +160,8 @@ class Finding:
             raise ValueError(f"Invalid ml_priority {self.ml_priority!r}; use '' or one of {ML_PRIORITIES}.")
         if self.ml_action not in ("",) + ML_ACTIONS:
             raise ValueError(f"Invalid ml_action {self.ml_action!r}; use '' or one of {ML_ACTIONS}.")
-        for name in ("nvd_severity", "ml_cvss_estimate"):
-            if getattr(self, name) not in ("",) + CVSS_SEVERITIES:
-                raise ValueError(f"Invalid {name} {getattr(self, name)!r}; use '' or one of {CVSS_SEVERITIES}.")
+        if self.nvd_severity not in ("",) + CVSS_SEVERITIES:
+            raise ValueError(f"Invalid nvd_severity {self.nvd_severity!r}; use '' or one of {CVSS_SEVERITIES}.")
         self.cvss_score = _clean_score(self.cvss_score)
         for name in ("target", "source", "title"):
             if not str(getattr(self, name) or "").strip():
@@ -215,7 +212,7 @@ def _clean_score(value: object) -> float | None:
 # Canonical field order (use this for CSV columns and tables).
 FINDING_FIELDS: tuple[str, ...] = (
     "id", "target", "source", "title", "severity", "original_severity",
-    "description", "evidence", "port", "service", "cve", "cvss_score", "nvd_severity", "ml_cvss_estimate", "check_id",
+    "description", "evidence", "port", "service", "cve", "cvss_score", "nvd_severity", "check_id",
     "ml_priority", "ml_action", "recommendation", "remediation_supported", "is_sample",
 )
 TEXT_FIELDS: tuple[str, ...] = tuple(

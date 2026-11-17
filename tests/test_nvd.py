@@ -1,13 +1,13 @@
-"""NVD: feed parsing, index, CVE lookup, severity model, and every 'data missing' case.
+"""NVD: feed parsing, index, CVE lookup, and every 'data missing' case.
+(The priority model trained on this data is tested in test_ml.py.)
 
-The index and model used here are built in conftest.py from tests/fixtures/nvd_feed_sample.json
+The index used here is built in conftest.py from tests/fixtures/nvd_feed_sample.json
 (a real 82-CVE excerpt of the NVD feed). Nothing is downloaded.
 """
 
 from __future__ import annotations
 
 import gzip
-import json
 import zipfile
 
 import pytest
@@ -104,17 +104,15 @@ def test_lookup_fills_official_values_only_for_known_cves():
     findings = [cve_finding(KNOWN_CVE), cve_finding("CVE-2021-41773"), cve_finding(UNRATED_CVE),
                 schemas.new_finding(LAB_HOST, "nmap", "Open port 22/tcp (ssh)", port=22, service="ssh")]
     enriched, status = nvd.enrich_findings(findings)
-    assert status == {"status": "SUCCESS", "error": "", "cve_findings": 3, "matched": 1, "estimated": 3}
+    assert status == {"status": "SUCCESS", "error": "", "cve_findings": 3, "matched": 1}
     known, unknown, unrated, port = enriched
     assert known["cvss_score"] == KNOWN_SCORE and known["nvd_severity"] == KNOWN_SEVERITY
     for f in (unknown, unrated):                                         # not in index / no rating: nothing invented
         assert f["cvss_score"] is None and f["nvd_severity"] == ""
-        assert f["ml_cvss_estimate"] in schemas.CVSS_SEVERITIES
-    # a finding without a CVE is never touched - the model is not applied to it
-    assert port == findings[3] and port["ml_cvss_estimate"] == ""
-    for before, after in zip(findings, enriched):                        # only the three NVD fields change
+    assert port == findings[3]                                           # a finding without a CVE is never touched
+    for before, after in zip(findings, enriched):                        # only the two NVD fields change
         changed = {k for k in before if before[k] != after[k]}
-        assert changed <= {"cvss_score", "nvd_severity", "ml_cvss_estimate"}
+        assert changed <= {"cvss_score", "nvd_severity"}
         assert before["cvss_score"] is None                              # input not modified
         schemas.validate_finding(after)
 
@@ -139,46 +137,7 @@ def test_missing_or_corrupt_index_gives_no_official_values(monkeypatch, tmp_path
     if broken == "corrupt":
         path.write_bytes(b"not a gzip file")
     monkeypatch.setattr(config, "NVD_INDEX_PATH", path)
-    enriched, status = nvd.enrich_findings([cve_finding(KNOWN_CVE)])
+    findings = [cve_finding(KNOWN_CVE)]
+    enriched, status = nvd.enrich_findings(findings)
     assert status["status"] == "FAILED" and "NVD lookup unavailable" in status["error"] and status["matched"] == 0
-    assert enriched[0]["cvss_score"] is None and enriched[0]["nvd_severity"] == ""
-    assert enriched[0]["ml_cvss_estimate"] in schemas.CVSS_SEVERITIES    # the model still works
-
-
-# ====================================================================== model
-def test_severity_model_trains_saves_reloads(trained_model_dir):
-    metrics = trained_model_dir.nvd_metrics
-    assert metrics["labels"] == list(schemas.CVSS_SEVERITIES)
-    assert metrics["train_rows"] + metrics["test_rows"] == 80            # the unrated CVE is not used
-    assert 0.0 <= metrics["accuracy"] <= 1.0 and sum(map(sum, metrics["confusion_matrix"])) == metrics["test_rows"]
-    bundle = nvd.load_severity_model()
-    assert bundle["labels"] == list(schemas.CVSS_SEVERITIES) and nvd.model_metrics() == metrics
-    assert set(bundle["model"].predict(["SQL injection allows remote attackers to execute arbitrary commands"])) \
-        <= set(schemas.CVSS_SEVERITIES)
-
-
-@pytest.mark.parametrize("broken", ["missing", "corrupt", "wrong_content"])
-def test_missing_or_broken_model_gives_no_estimate(monkeypatch, tmp_path, broken):
-    path = tmp_path / "nvd.joblib"
-    if broken == "corrupt":
-        path.write_bytes(b"not a model")
-    elif broken == "wrong_content":
-        import joblib
-        joblib.dump({"something": "else"}, path)
-    monkeypatch.setattr(config, "NVD_MODEL_PATH", path)
-    enriched, status = nvd.enrich_findings([cve_finding(KNOWN_CVE)])
-    assert status["status"] == "FAILED" and "NVD severity model unavailable" in status["error"] and status["estimated"] == 0
-    assert enriched[0]["ml_cvss_estimate"] == ""                         # no estimate is faked
-    assert enriched[0]["cvss_score"] == KNOWN_SCORE                      # the lookup still works
-    assert nvd.model_metrics() == {}
-
-
-def test_training_needs_enough_rated_cves(monkeypatch, tmp_path):
-    data = json.loads(FEED.read_text(encoding="utf-8"))
-    data["vulnerabilities"] = data["vulnerabilities"][:5]
-    small = tmp_path / "small.json"
-    small.write_text(json.dumps(data))
-    monkeypatch.setattr(config, "NVD_INDEX_PATH", tmp_path / "small.csv.gz")
-    nvd.build_index([small])
-    with pytest.raises(RuntimeError, match="Not enough rated CVEs"):
-        nvd.train_severity_model()
+    assert enriched == findings                                          # unchanged, nothing invented

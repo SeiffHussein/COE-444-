@@ -1,44 +1,52 @@
 """
 modules/ml_classifier.py - two small scikit-learn models that ADVISE on findings.
 
-    priority model -> ml_priority  (LOW / MEDIUM / HIGH / CRITICAL)
-    action model   -> ml_action    (REVIEW_SERVICE, PATCH_OR_UPDATE, HARDEN_SSH, ...)
+    priority model -> ml_priority  (LOW / MEDIUM / HIGH / CRITICAL)   trained on REAL NVD data
+    action model   -> ml_action    (REVIEW_SERVICE, PATCH_OR_UPDATE, ...)  trained on SYNTHETIC data
 
-WHAT THE MODELS DO (and do not do)
-    The scanners find the issues. The models only suggest how urgent a finding
-    is and which kind of action fits. They are trained on SYNTHETIC data whose
-    labels come from rules we wrote ourselves (below), so their accuracy says
-    NOTHING about real-world performance. An ML action is a label for a human
-    to read - it is never executed.
+The scanners find the issues. The models only suggest how urgent a finding is
+and which kind of action fits. An ML action is a label for a human to read -
+it is never executed.
 
-FEATURES (simple on purpose, one row per finding)
-    severity_score        0-4   Info=0 ... Critical=4 (normalized severity)
-    source_tool           nmap / nuclei / nikto / lynis          (one-hot encoded)
-    has_cve               0/1   the tool reported a CVE id
-    category              ssh / web / tls / other / none          (one-hot encoded)
-    is_misconfiguration   0/1   a configuration weakness rather than a software flaw
-    internet_facing       0/1   asset property, from config.ASSET_INTERNET_FACING
-    asset_criticality     1-3   asset property, from config.ASSET_CRITICALITY
+PRIORITY MODEL (real data)
+    Training data: the CVE table built from the NVD feeds (modules/nvd.py,
+    data/nvd_cves.csv.gz). Input = the English description of a CVE,
+    label = the official CVSS severity NVD gave it.
+    Method: TF-IDF (weights for words and word pairs) -> RandomForestClassifier.
+    At runtime the input is a finding's title + description.
 
-LABEL RULES used to build the synthetic dataset
-    Priority:  points = 2*severity_score + 2*has_cve + 2*internet_facing
-                        + (asset_criticality - 1)
-                        + 1 if (is_misconfiguration and severity_score >= 2)
-               CRITICAL if points >= 10, HIGH if >= 7, MEDIUM if >= 4, else LOW
-               then 8 % of rows are moved one level up or down (noise).
-    Action (first matching rule wins):
-               has_cve                               -> PATCH_OR_UPDATE
-               category tls                          -> REVIEW_TLS
-               source_tool nmap                      -> REVIEW_SERVICE
-               category ssh and (misconfig or sev>0) -> HARDEN_SSH
-               category web and misconfig            -> HARDEN_WEB_SERVER
-               severity_score == 0                   -> NO_ACTION_INFORMATIONAL
-               otherwise                             -> INVESTIGATE_FINDING
-               then 5 % of rows get a random action (noise).
+    Limits to state clearly:
+      * The model has only ever read CVE descriptions. For findings that are
+        not CVEs (a Lynis suggestion, a Nikto message) it is working outside
+        what it was trained on, and its rating is much less reliable.
+      * NVD has no "informational" class, so the model cannot say "this is not
+        a vulnerability". Findings the scanner itself rates Info (open ports,
+        service detections, the hardening index) are therefore NOT rated:
+        their ml_priority stays empty.
+
+ACTION MODEL (synthetic data)
+    NVD has no "what to do" label, so this model still learns from
+    data/synthetic_findings.csv, whose labels come from the rule below. Its
+    accuracy only shows that it recovered our own rule.
+
+    Features (one row per finding)
+        severity_score        0-4   Info=0 ... Critical=4 (normalized severity)
+        source_tool           nmap / nuclei / nikto / lynis          (one-hot encoded)
+        has_cve               0/1   the tool reported a CVE id
+        category              ssh / web / tls / other / none          (one-hot encoded)
+        is_misconfiguration   0/1   a configuration weakness rather than a software flaw
+    Label rule (first matching rule wins), then 5 % of rows get a random action:
+        has_cve                               -> PATCH_OR_UPDATE
+        category tls                          -> REVIEW_TLS
+        source_tool nmap                      -> REVIEW_SERVICE
+        category ssh and (misconfig or sev>0) -> HARDEN_SSH
+        category web and misconfig            -> HARDEN_WEB_SERVER
+        severity_score == 0                   -> NO_ACTION_INFORMATIONAL
+        otherwise                             -> INVESTIGATE_FINDING
 
 Command line:
-    python -m modules.ml_classifier                train both models from the CSV
-    python -m modules.ml_classifier --regenerate   rebuild the CSV first, then train
+    python -m modules.ml_classifier                train both models
+    python -m modules.ml_classifier --regenerate   rebuild the synthetic CSV first, then train
 """
 
 from __future__ import annotations
@@ -50,23 +58,26 @@ from pathlib import Path
 import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
 
 import config
+from modules import nvd
 from schemas import ML_ACTIONS, ML_PRIORITIES, SEVERITY_SCORES, TOOLS
 
 CATEGORIES: tuple[str, ...] = ("ssh", "web", "tls", "other", "none")
 
 # Readable columns stored in the CSV ...
-RAW_COLUMNS: list[str] = ["severity_score", "source_tool", "has_cve", "category",
-                          "is_misconfiguration", "internet_facing", "asset_criticality"]
+RAW_COLUMNS: list[str] = ["severity_score", "source_tool", "has_cve", "category", "is_misconfiguration"]
 # ... and the numeric columns the models actually see (fixed order, saved with the model).
 FEATURE_COLUMNS: list[str] = (
-    ["severity_score", "has_cve", "is_misconfiguration", "internet_facing", "asset_criticality"]
+    ["severity_score", "has_cve", "is_misconfiguration"]
     + [f"tool_{t}" for t in TOOLS] + [f"cat_{c}" for c in CATEGORIES]
 )
-PRIORITY_COLUMN, ACTION_COLUMN = "priority", "action"
+ACTION_COLUMN = "action"
+SAMPLE_NOTE = "SAMPLE DATA - not from a real scan. "     # label added by sample mode; not part of the finding text
 
 _TLS_WORDS = ("tls", "ssl", "certificate", "cipher")
 _MISCONFIG_WORDS = ("misconfig", "header", "permitrootlogin", "root login", "directory indexing",
@@ -103,16 +114,19 @@ def extract_features(finding: dict) -> dict:
         "has_cve": has_cve,
         "category": category,
         "is_misconfiguration": is_misconfiguration,
-        "internet_facing": int(config.ASSET_INTERNET_FACING),
-        "asset_criticality": int(config.ASSET_CRITICALITY),
     }
+
+
+def finding_text(finding: dict) -> str:
+    """The text the priority model reads for one finding: title + description."""
+    description = str(finding.get("description", "")).replace(SAMPLE_NOTE, "")
+    return f"{finding.get('title', '')}. {description}".strip()
 
 
 def encode_features(rows: list[dict] | pd.DataFrame) -> pd.DataFrame:
     """One-hot encode readable feature rows into the numeric FEATURE_COLUMNS table."""
     raw = pd.DataFrame(rows, columns=RAW_COLUMNS)
-    encoded = raw[["severity_score", "has_cve", "is_misconfiguration",
-                   "internet_facing", "asset_criticality"]].astype(int)
+    encoded = raw[["severity_score", "has_cve", "is_misconfiguration"]].astype(int)
     for tool in TOOLS:
         encoded[f"tool_{tool}"] = (raw["source_tool"] == tool).astype(int)
     for category in CATEGORIES:
@@ -121,20 +135,6 @@ def encode_features(rows: list[dict] | pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------- label rules
-def priority_rule(row: dict) -> str:
-    """The documented priority rule (before noise). See module docstring."""
-    points = (2 * row["severity_score"] + 2 * row["has_cve"] + 2 * row["internet_facing"]
-              + (row["asset_criticality"] - 1)
-              + (1 if row["is_misconfiguration"] and row["severity_score"] >= 2 else 0))
-    if points >= 10:
-        return "CRITICAL"
-    if points >= 7:
-        return "HIGH"
-    if points >= 4:
-        return "MEDIUM"
-    return "LOW"
-
-
 def action_rule(row: dict) -> str:
     """The documented action rule (before noise). See module docstring."""
     if row["has_cve"]:
@@ -154,16 +154,15 @@ def action_rule(row: dict) -> str:
 
 # ---------------------------------------------------------------- dataset
 def generate_synthetic_dataset(path: str | Path | None = None, n_rows: int | None = None) -> Path:
-    """Create the reproducible synthetic dataset (fixed seed config.RANDOM_SEED).
+    """Create the reproducible synthetic dataset for the ACTION model (fixed seed).
 
     Each row imitates a finding one of the four tools could plausibly produce
-    (e.g. Nmap rows are always Info without a CVE). Labels come from
-    priority_rule() / action_rule() plus a little noise.
+    (e.g. Nmap rows are always Info without a CVE). The label comes from
+    action_rule() plus a little noise.
     """
     path = Path(path or config.SYNTHETIC_DATASET_PATH)
     n_rows = n_rows or config.SYNTHETIC_ROWS
     rng = random.Random(config.RANDOM_SEED)
-    low_to_high = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
     rows = []
     for _ in range(n_rows):
         tool = rng.choices(["nmap", "nuclei", "nikto", "lynis"], weights=[20, 35, 20, 25])[0]
@@ -188,27 +187,22 @@ def generate_synthetic_dataset(path: str | Path | None = None, n_rows: int | Non
         row = {
             "severity_score": sev, "source_tool": tool, "has_cve": cve, "category": category,
             "is_misconfiguration": misconfig,
-            "internet_facing": int(rng.random() < 0.3),
-            "asset_criticality": rng.choices([1, 2, 3], weights=[25, 50, 25])[0],
         }
-        priority, action = priority_rule(row), action_rule(row)
-        if rng.random() < 0.08:      # noise: one level up or down
-            index = low_to_high.index(priority) + rng.choice([-1, 1])
-            priority = low_to_high[min(max(index, 0), 3)]
+        action = action_rule(row)
         if rng.random() < 0.05:      # noise: any action
             action = rng.choice(ML_ACTIONS)
-        rows.append({**row, PRIORITY_COLUMN: priority, ACTION_COLUMN: action})
+        rows.append({**row, ACTION_COLUMN: action})
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows, columns=RAW_COLUMNS + [PRIORITY_COLUMN, ACTION_COLUMN]).to_csv(path, index=False)
+    pd.DataFrame(rows, columns=RAW_COLUMNS + [ACTION_COLUMN]).to_csv(path, index=False)
     return path
 
 
-def load_dataset() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
-    """Load the synthetic dataset.
+def load_dataset() -> tuple[pd.DataFrame, pd.Series]:
+    """Load the synthetic dataset of the action model.
 
     Returns:
-        (X, y_priority, y_action): X has FEATURE_COLUMNS (numeric).
+        (X, y_action): X has FEATURE_COLUMNS (numeric).
 
     Raises:
         RuntimeError: dataset missing or missing required columns.
@@ -218,10 +212,10 @@ def load_dataset() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
         raise RuntimeError(f"Dataset not found at {path}. "
                            "Recreate it with: python -m modules.ml_classifier --regenerate")
     df = pd.read_csv(path)
-    missing = [c for c in RAW_COLUMNS + [PRIORITY_COLUMN, ACTION_COLUMN] if c not in df.columns]
+    missing = [c for c in RAW_COLUMNS + [ACTION_COLUMN] if c not in df.columns]
     if missing:
         raise RuntimeError(f"Dataset is missing columns: {missing}")
-    return encode_features(df[RAW_COLUMNS]), df[PRIORITY_COLUMN], df[ACTION_COLUMN]
+    return encode_features(df[RAW_COLUMNS]), df[ACTION_COLUMN]
 
 
 # ---------------------------------------------------------------- training
@@ -241,25 +235,58 @@ def evaluate_predictions(y_true, predicted, labels: tuple[str, ...], train_rows:
     }
 
 
-def _train_one(X: pd.DataFrame, y: pd.Series, labels: tuple[str, ...], model_path: Path) -> dict:
-    """Train, evaluate, save and reload one RandomForest. Returns its metrics."""
+def train_priority_model() -> dict:
+    """Train the priority model on REAL NVD data, save it, reload it. Returns its metrics.
+
+    Input = CVE description text, label = NVD's CVSS severity. Evaluated on a
+    held-out 25 % of real CVEs the model never saw.
+
+    Raises:
+        RuntimeError: NVD index missing, or too few rated CVEs to train on.
+    """
+    rows = [r for r in nvd.load_index().values() if r["cvss_severity"] in ML_PRIORITIES and r["description"]]
+    counts = {label: sum(r["cvss_severity"] == label for r in rows) for label in ML_PRIORITIES}
+    if min(counts.values()) < 4:
+        raise RuntimeError(f"Not enough rated CVEs in the NVD index to train on: {counts}")
+    texts, labels = [r["description"] for r in rows], [r["cvss_severity"] for r in rows]
+    X_train, X_test, y_train, y_test = train_test_split(
+        texts, labels, test_size=config.ML_TEST_SIZE, random_state=config.RANDOM_SEED, stratify=labels)
+
+    model = make_pipeline(
+        # words and word pairs -> numbers (how characteristic each word is for a description)
+        TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words="english", sublinear_tf=True),
+        RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=config.RANDOM_SEED),
+    )
+    model.fit(X_train, y_train)
+    metrics = evaluate_predictions(y_test, model.predict(X_test), ML_PRIORITIES, len(X_train))
+    metrics["training_data"] = f"real NVD CVE descriptions ({len(rows)} rated CVEs)"
+
+    path = Path(config.PRIORITY_MODEL_PATH)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump({"model": model, "labels": list(ML_PRIORITIES), "metrics": metrics}, path, compress=3)
+    # Reload from disk and check the saved model really predicts valid labels.
+    if not set(joblib.load(path)["model"].predict(X_test[:5])) <= set(ML_PRIORITIES):
+        raise RuntimeError(f"Reloaded model at {path} predicted unknown labels.")
+    return metrics
+
+
+def train_action_model() -> dict:
+    """Train the action model on the SYNTHETIC dataset, save it, reload it. Returns its metrics."""
+    X, y = load_dataset()
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=config.ML_TEST_SIZE, random_state=config.RANDOM_SEED, stratify=y)
     model = RandomForestClassifier(n_estimators=100, max_depth=8, random_state=config.RANDOM_SEED)
     model.fit(X_train, y_train)
+    metrics = evaluate_predictions(y_test, model.predict(X_test), ML_ACTIONS, len(X_train))
+    metrics["training_data"] = f"synthetic findings labelled by our own rule ({len(X)} rows)"
 
-    metrics = evaluate_predictions(y_test, model.predict(X_test), labels, len(X_train))
-
-    model_path = Path(model_path)
-    model_path.parent.mkdir(parents=True, exist_ok=True)
+    path = Path(config.ACTION_MODEL_PATH)
+    path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump({"model": model, "feature_columns": FEATURE_COLUMNS,
-                 "labels": list(labels), "metrics": metrics}, model_path)
-
-    # Reload from disk and check the saved model really predicts valid labels.
-    bundle = joblib.load(model_path)
-    check = bundle["model"].predict(X_test[bundle["feature_columns"]].head(5))
-    if not set(check) <= set(labels):
-        raise RuntimeError(f"Reloaded model at {model_path} predicted unknown labels: {set(check)}")
+                 "labels": list(ML_ACTIONS), "metrics": metrics}, path)
+    bundle = joblib.load(path)
+    if not set(bundle["model"].predict(X_test[bundle["feature_columns"]].head(5))) <= set(ML_ACTIONS):
+        raise RuntimeError(f"Reloaded model at {path} predicted unknown labels.")
     return metrics
 
 
@@ -267,13 +294,10 @@ def train_models() -> dict:
     """Train and save both models. Returns {"priority": metrics, "action": metrics}.
 
     Raises:
-        RuntimeError: dataset missing/invalid or a saved model fails its reload check.
+        RuntimeError: NVD index or synthetic dataset missing/invalid, or a
+                      saved model fails its reload check.
     """
-    X, y_priority, y_action = load_dataset()
-    return {
-        "priority": _train_one(X, y_priority, ML_PRIORITIES, config.PRIORITY_MODEL_PATH),
-        "action": _train_one(X, y_action, ML_ACTIONS, config.ACTION_MODEL_PATH),
-    }
+    return {"priority": train_priority_model(), "action": train_action_model()}
 
 
 def format_metrics(name: str, metrics: dict) -> str:
@@ -282,6 +306,7 @@ def format_metrics(name: str, metrics: dict) -> str:
     width = max(len(label) for label in labels) + 2
     lines = [
         f"=== {name} model ({metrics['train_rows']} train rows / {metrics['test_rows']} test rows) ===",
+        f"training data   {metrics.get('training_data', '')}",
         f"accuracy        {metrics['accuracy']:.3f}",
         f"macro precision {metrics['precision_macro']:.3f}",
         f"macro recall    {metrics['recall_macro']:.3f}",
@@ -301,7 +326,7 @@ def load_model(path: str | Path) -> dict:
         raise RuntimeError(f"Model file {path.name} is missing. Train it with: python -m modules.ml_classifier")
     try:
         bundle = joblib.load(path)
-        bundle["model"], bundle["feature_columns"], bundle["labels"]
+        bundle["model"], bundle["labels"]
     except Exception as exc:  # corrupt file, wrong library version, wrong content
         raise RuntimeError(f"Model file {path.name} could not be loaded: {exc}") from exc
     return bundle
@@ -314,6 +339,11 @@ def classify_findings(findings: list[dict]) -> tuple[list[dict], dict]:
         (findings, status). `findings` are copies; only ml_priority / ml_action
         are filled in. status = {"status": "SUCCESS" | "FAILED" | "SKIPPED", "error": str}.
 
+        ml_action is predicted for every finding. ml_priority is predicted for
+        findings the scanner rated above Info; Info findings are not
+        vulnerabilities, which the NVD-trained model cannot express, so their
+        ml_priority stays "".
+
         If a model is missing or broken, the findings come back UNCHANGED with
         status FAILED and the reason - a prediction is never made up.
         Never raises.
@@ -325,14 +355,15 @@ def classify_findings(findings: list[dict]) -> tuple[list[dict], dict]:
         priority = load_model(config.PRIORITY_MODEL_PATH)
         action = load_model(config.ACTION_MODEL_PATH)
         table = encode_features([extract_features(f) for f in findings])
-        priorities = priority["model"].predict(table[priority["feature_columns"]])
         actions = action["model"].predict(table[action["feature_columns"]])
-        if not set(priorities) <= set(ML_PRIORITIES) or not set(actions) <= set(ML_ACTIONS):
+        rated = [i for i, f in enumerate(findings) if f.get("severity", "Info") != "Info"]
+        priorities = dict(zip(rated, priority["model"].predict([finding_text(findings[i]) for i in rated]))) if rated else {}
+        if not set(priorities.values()) <= set(ML_PRIORITIES) or not set(actions) <= set(ML_ACTIONS):
             raise RuntimeError("A model predicted a label outside the agreed label sets.")
     except Exception as exc:
         return findings, {"status": "FAILED", "error": f"ML unavailable: {exc}"}
-    classified = [{**f, "ml_priority": str(p), "ml_action": str(a)}
-                  for f, p, a in zip(findings, priorities, actions)]
+    classified = [{**f, "ml_priority": str(priorities.get(i, "")), "ml_action": str(a)}
+                  for i, (f, a) in enumerate(zip(findings, actions))]
     return classified, {"status": "SUCCESS", "error": ""}
 
 
@@ -354,5 +385,6 @@ if __name__ == "__main__":
         print(format_metrics(model_name, model_metrics_))
         print()
     print(f"Models saved in {config.MODELS_DIR}")
-    print("NOTE: these scores are measured on SYNTHETIC data labelled by our own rules.")
-    print("      They say nothing about real-world performance.")
+    print("NOTE: the priority score is measured on real NVD CVEs the model did not see. It says how well")
+    print("      the model rates CVE descriptions - not how well it rates other kinds of findings.")
+    print("      The action score is measured on synthetic data and only shows the model learned our rule.")

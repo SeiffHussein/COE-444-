@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 import config
-from modules import ml_classifier, nvd, orchestrator, remediation, reporting, tool_utils
+from modules import ml_classifier, orchestrator, remediation, reporting, tool_utils
 from schemas import ML_PRIORITIES, SEVERITIES, TOOLS
 
 STATUS_ICONS = {"SUCCESS": "✅", "FAILED": "❌", "SKIPPED": "⏭️", "NOT_APPLICABLE": "➖"}
@@ -124,16 +124,17 @@ def main() -> None:
                  & table["ml_priority"].replace("", "(not classified)").isin(priorities)]
     st.dataframe(
         view[["title", "source", "original_severity", "severity", "ml_priority", "ml_action",
-              "port", "service", "cve", "cvss_score", "nvd_severity", "ml_cvss_estimate",
+              "port", "service", "cve", "cvss_score", "nvd_severity",
               "recommendation"]].rename(columns={
-                  "cvss_score": "NVD CVSS score", "nvd_severity": "NVD severity", "ml_cvss_estimate": "ML CVSS estimate",
+                  "cvss_score": "NVD CVSS score", "nvd_severity": "NVD severity",
                   "source": "tool", "original_severity": "original severity", "severity": "normalized severity",
                   "ml_priority": "ML priority", "ml_action": "ML action"}),
         hide_index=True)
-    st.caption("NVD CVSS score/severity are official values looked up by CVE id (empty if the CVE is not in the "
-               "local NVD index). ML CVSS estimate is a model's guess from the description, for CVE findings only.")
-    st.caption("Original severity is the tool's own wording (empty if the tool gives none). "
-               "ML priority/action are advisory labels from models trained on synthetic data.")
+    st.caption("Original severity is the tool's own wording (empty if the tool gives none). NVD CVSS score/severity "
+               "are official values looked up by CVE id (empty if the CVE is not in the local NVD index).")
+    st.caption("ML priority is advisory: the model was trained on real NVD CVE descriptions, is much less reliable "
+               "for findings that are not CVEs, and does not rate informational findings. "
+               "ML action is advisory and trained on synthetic data.")
 
     st.markdown("**Evidence** (expand a finding)")
     for row in view.to_dict("records"):
@@ -143,7 +144,7 @@ def main() -> None:
             st.write(f"Check ID: `{row['check_id'] or '-'}` - CVE: `{row['cve'] or '-'}` - Finding ID: `{row['id']}`")
             if row["cve"]:
                 official = f"{row['cvss_score']} {row['nvd_severity']}" if row["nvd_severity"] else "CVE not in the local NVD index"
-                st.write(f"NVD CVSS (official): **{official}** - ML CVSS estimate: **{row['ml_cvss_estimate'] or 'not estimated'}**")
+                st.write(f"NVD CVSS (official): **{official}**")
             st.markdown(f"**Recommendation:** {row['recommendation']}")
 
     # ================================================================ remediation
@@ -201,13 +202,9 @@ def main() -> None:
 
     # ================================================================ ML details
     with st.expander("ML model details"):
-        st.write("**NVD severity model** - trained and tested on real NVD CVE descriptions. Used only for findings with a CVE id.")
-        if nvd.model_metrics():
-            st.code(ml_classifier.format_metrics("NVD severity", nvd.model_metrics()), language=None)
-        else:
-            st.write("NVD severity model: not available (train with `python -m modules.nvd`).")
-        st.write("**Priority and action models** - scores below are measured on **synthetic** data labelled by "
-                 "our own rules. They say nothing about real-world performance.")
+        st.write("The **priority** model is trained and tested on real NVD CVE descriptions; its score says how well "
+                 "it rates CVEs, not other kinds of findings. The **action** model is trained on synthetic data "
+                 "labelled by our own rule; its score only shows that it learned that rule.")
         for name, metrics in ml_classifier.model_metrics().items():
             if metrics:
                 st.code(ml_classifier.format_metrics(name, metrics), language=None)
