@@ -19,8 +19,9 @@ This is a student prototype, not a commercial scanner. No database, no Docker, n
 7. [Tests and the demo script](#7-tests-and-the-demo-script)
 8. [Data contract](#8-data-contract)
 9. [Machine learning: method and limits](#9-machine-learning-method-and-limits)
-10. [Safety design](#10-safety-design)
-11. [Known limitations](#11-known-limitations)
+10. [NVD data](#10-nvd-data)
+11. [Safety design](#11-safety-design)
+12. [Known limitations](#12-known-limitations)
 
 ---
 
@@ -38,8 +39,9 @@ This is a student prototype, not a commercial scanner. No database, no Docker, n
     |     Nikto         vulnerability_scanner.scan_nikto()               -> only if Nmap found HTTP/HTTPS
     |  4. Lynis         host_auditor.audit_host()                        -> runs ON the VM over SSH
     |  5. merge         every scanner returned a ScanResult of findings in ONE format (schemas.py)
-    |  6. ML            ml_classifier.classify_findings()                -> ml_priority, ml_action
-    |  7. advice        remediation.add_recommendations()                -> recommendation text
+    |  6. NVD           nvd.enrich_findings()                            -> official CVSS for CVE findings
+    |  7. ML            ml_classifier.classify_findings()                -> ml_priority, ml_action
+    |  8. advice        remediation.add_recommendations()                -> recommendation text
     v
  combined result dict  ->  dashboard  ->  reporting.generate_csv_report() / generate_html_report()
                                       ->  remediation.apply_fix()   (one guarded fix, after approval)
@@ -61,9 +63,11 @@ modules/
   host_auditor.py           Lynis over SSH (report file)
   orchestrator.py           the pipeline
   ml_classifier.py          dataset generator, training, prediction
+  nvd.py                    NVD feed -> CVE index, CVE lookup, NVD-trained severity model
   remediation.py            recommendations + the one automatic fix
   reporting.py              CSV / HTML
 data/synthetic_findings.csv synthetic training data (600 rows, fixed seed)
+data/nvd_cves.csv.gz        real CVE data built from the NVD feed (10,555 CVEs)
 models/                     trained models (*.joblib, git-ignored, rebuilt by one command)
 reports/                    generated reports (git-ignored)
 tests/                      pytest suite; tests/fixtures/ = labelled sample tool output
@@ -82,6 +86,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python -m modules.ml_classifier
+python -m modules.nvd
 python -m pytest -q
 python -m streamlit run app.py
 ```
@@ -93,13 +98,14 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m modules.ml_classifier
+python -m modules.nvd
 python -m pytest -q
 python -m streamlit run app.py
 ```
 
 If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-`python -m modules.ml_classifier` trains the two ML models into `models/` (about one second). The model files are not stored in Git, so this step is needed once after cloning. Without it the app still works and shows an "ML unavailable" message.
+`python -m modules.ml_classifier` trains the priority and action models (about one second) and `python -m modules.nvd` trains the NVD severity model (about ten seconds), all into `models/`. The model files are not stored in Git, so these steps are needed once after cloning. Without them the app still works and shows an "unavailable" message for the missing model.
 
 ---
 
@@ -276,8 +282,9 @@ python demo_tests.py
 ```
 
 - The test suite never touches a real system. `tests/conftest.py` blocks `subprocess` for every test; tools and SSH are replaced by mocks that answer with the fixtures. Models are trained into a temporary folder.
+- The NVD tests use a small real excerpt of the feed (82 CVEs) in `tests/fixtures/`.
 - Covered: each scanner (success, empty success, missing tool, timeout, malformed output, non-zero exit), Nikto `NOT_APPLICABLE`, unauthorized targets, the schema, both ML models (train, save, reload, valid labels, missing model), recommendation mapping, every remediation guard, report content and HTML escaping, the orchestrator with one tool failing, and the dashboard (import and page load run nothing).
-- `demo_tests.py` prints `Test / Scenario / Expected / Actual / Result` for 17 key scenarios and a totals line. `PASS` is computed by comparing the actual value with the expected one.
+- `demo_tests.py` prints `Test / Scenario / Expected / Actual / Result` for 19 key scenarios and a totals line. `PASS` is computed by comparing the actual value with the expected one.
 
 ---
 
@@ -300,6 +307,9 @@ Defined in `schemas.py`. Every module exchanges plain dicts in these shapes.
 | `port` | int or None | port, if the tool reported one |
 | `service` | str | service name, if reported |
 | `cve` | str | CVE id(s), only if the tool reported them |
+| `cvss_score` | float or None | official CVSS base score from NVD, if the CVE is in the local index |
+| `nvd_severity` | str | official NVD severity: empty, or `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
+| `ml_cvss_estimate` | str | model's estimate of the CVSS severity; only for findings with a CVE |
 | `check_id` | str | Nuclei template id, Nikto test id or Lynis test id |
 | `ml_priority` | str | empty, or `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
 | `ml_action` | str | empty, or one of the action labels below |
@@ -331,7 +341,8 @@ Unknown values are `None` or `""`. A CVE, port or service is never invented.
 ```
 {"scan_id", "target", "is_sample", "authorized", "started_at", "finished_at", "duration_s",
  "scans": {"nmap": ScanResult, "nuclei": ..., "nikto": ..., "lynis": ...},
- "findings": [...], "ml": {"status", "error"}, "errors": [...], "remediation": None or outcome}
+ "findings": [...], "nvd": {"status", "error", "cve_findings", "matched", "estimated"},
+ "ml": {"status", "error"}, "errors": [...], "remediation": None or outcome}
 ```
 
 **ML action labels:** `REVIEW_SERVICE`, `PATCH_OR_UPDATE`, `HARDEN_SSH`, `HARDEN_WEB_SERVER`, `REVIEW_TLS`, `INVESTIGATE_FINDING`, `NO_ACTION_INFORMATIONAL`.
@@ -339,6 +350,8 @@ Unknown values are `None` or `""`. A CVE, port or service is never invented.
 ---
 
 ## 9. Machine learning: method and limits
+
+This section covers the priority and action models. The third model, trained on real NVD data, is described in section 10.
 
 **What it does.** The scanners find the issues. Two `RandomForestClassifier` models only suggest how urgent a finding is (`ml_priority`) and what kind of action fits (`ml_action`). At runtime only those two fields are filled in. If a model file is missing or broken, the findings are returned unchanged with an ML error. A prediction is never faked.
 
@@ -385,7 +398,35 @@ Results on the held-out synthetic rows with the committed dataset:
 
 ---
 
-## 10. Safety design
+## 10. NVD data
+
+The project uses real vulnerability data from the NVD (National Vulnerability Database, published by NIST): the JSON 2.0 CVE feeds at https://nvd.nist.gov/vuln/data-feeds. All of this lives in `modules/nvd.py`. The app never contacts NVD itself; feed files are downloaded by hand.
+
+**What is in the repo.** `data/nvd_cves.csv.gz` is a compact table built from the NVD "modified" feed of 17 November 2026: 10,555 CVEs (rejected ones removed), of which 10,270 have a CVSS rating. Columns: CVE id, published date, CVSS version, score, severity, vector, CWE, English description. The "modified" feed holds only recently added or changed CVEs, so most entries are from 2026.
+
+**Use 1: CVE lookup.** When a scanner reports a CVE id, the official CVSS score and severity are copied onto the finding (`cvss_score`, `nvd_severity`). If a finding lists several CVEs, the highest score is used. A CVE that is not in the local table gets nothing; a score is never guessed. The tool's own severity is not changed.
+
+**Use 2: a model trained on real data.** A text model learns to predict the CVSS severity from a CVE description: TF-IDF (word and word-pair weights, 5,000 features) into a `RandomForestClassifier` with 100 trees. The label is NVD's own severity, so nothing here is synthetic. Stratified 75/25 split.
+
+| Model | Train / test rows | Accuracy | Macro precision | Macro recall | Macro F1 |
+|---|---|---|---|---|---|
+| NVD severity | 7,702 / 2,568 | 0.672 | 0.600 | 0.549 | 0.565 |
+
+For comparison, always answering the most common class (HIGH) would score 0.45. The model is weakest on LOW (34 % recall) and CRITICAL (42 % recall), which are the two rare classes; most mistakes are one level off.
+
+**Where the model is used, and why only there.** Its output is `ml_cvss_estimate`, filled in only for findings that carry a CVE id. It is useful when the CVE is missing from the local table, and when the CVE is present the report shows the official value next to the estimate. It is deliberately **not** used for other findings. The model has only seen CVE descriptions; when we tried it on other text it rated a missing security header CRITICAL and an open SSH port HIGH. That is also why it did not replace the priority model.
+
+**Adding more data.** For wider lookup coverage, download yearly feeds (for example `nvdcve-2.0-2021.json.gz`) from the NVD page into `data/nvd_feeds/` (git-ignored), then rebuild and retrain:
+
+```bash
+python -m modules.nvd data/nvd_feeds/*
+```
+
+`.json`, `.json.gz` and `.zip` files are accepted. If a CVE appears in several files, the last file wins. The accuracy figures above will change with the data used.
+
+---
+
+## 11. Safety design
 
 - **Authorization before anything else.** `validate_target` (format) and `is_authorized` (exact match in `AUTHORIZED_TARGETS`) are separate checks. The orchestrator runs both before any tool starts, every scanner and `run_ssh` check again, and sample mode follows the same rule.
 - **One way to start programs.** `run_tool` takes an argument list, never uses a shell and always has a timeout. Target text that starts with `-` or contains spaces or shell characters is rejected.
@@ -409,11 +450,13 @@ Results on the held-out synthetic rows with the committed dataset:
 
 ---
 
-## 11. Known limitations
+## 12. Known limitations
 
 - Scans are not exhaustive: top 100 TCP ports only, no UDP, non-intrusive templates only. No finding does not mean no vulnerability.
 - Nikto gives no severity, so its severity is a keyword estimate. Nmap findings are always `Info`.
-- ML is trained on synthetic data and is advisory only (section 9). The asset features come from `config.py`, so they are the same for every finding of a run.
+- NVD lookup only knows the CVEs in the local table, which currently covers recent CVEs only. Older ones, such as the Apache CVE in the sample data, are not found until more feeds are added (section 10).
+- The NVD severity model is right about two times in three and applies to CVE findings only.
+- The priority and action models are trained on synthetic data and are advisory only (section 9). The asset features come from `config.py`, so they are the same for every finding of a run.
 - Lynis needs SSH access and the sudoers rule on the VM; it is not run against `127.0.0.1` unless SSH is set up there.
 - The exact Lynis wording for the root-login item differs between Lynis versions. The detection accepts the common forms; check it on your VM's version during the first real run.
 - `sshd -T` shows the configuration sshd would load from disk. The fix is verified by that value plus a fresh login, not by attempting a root login.

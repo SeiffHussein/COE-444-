@@ -18,6 +18,9 @@ def assert_finding(f: dict) -> None:
     assert f["ml_priority"] in ("",) + schemas.ML_PRIORITIES
     assert f["ml_action"] in ("",) + schemas.ML_ACTIONS
     assert f["port"] is None or isinstance(f["port"], int)
+    assert f["cvss_score"] is None or (isinstance(f["cvss_score"], float) and 0 <= f["cvss_score"] <= 10)
+    assert f["nvd_severity"] in ("",) + schemas.CVSS_SEVERITIES
+    assert f["ml_cvss_estimate"] in ("",) + schemas.CVSS_SEVERITIES
     assert isinstance(f["remediation_supported"], bool) and isinstance(f["is_sample"], bool)
     assert f["id"] and f["target"] and f["source"] and f["title"]
 
@@ -27,7 +30,8 @@ def test_finding_defaults_are_unknown_not_invented():
     f = schemas.new_finding("10.0.0.1", "nmap", "Open port 22/tcp")
     assert_finding(f)
     assert f["severity"] == "Info" and len(f["id"]) == 8
-    assert f["port"] is None
+    assert f["port"] is None and f["cvss_score"] is None
+    assert f["nvd_severity"] == f["ml_cvss_estimate"] == ""
     assert f["original_severity"] == f["service"] == f["cve"] == f["check_id"] == ""
     assert f["ml_priority"] == f["ml_action"] == f["recommendation"] == ""
     assert f["remediation_supported"] is False and f["is_sample"] is False
@@ -43,7 +47,8 @@ def test_label_sets_match_the_contract():
 
 @pytest.mark.parametrize("bad", [
     {"severity": "urgent"}, {"ml_priority": "P1"}, {"ml_action": "rm -rf /"},
-    {"port": 70000}, {"port": "ssh"}, {"is_sample": "yes"}, {"remediation_supported": 1},
+    {"port": 70000}, {"port": "ssh"}, {"cvss_score": 11}, {"cvss_score": "high"}, {"cvss_score": float("nan")},
+    {"nvd_severity": "Critical"}, {"ml_cvss_estimate": "P1"}, {"is_sample": "yes"}, {"remediation_supported": 1},
 ])
 def test_finding_rejects_invalid_values(bad):
     with pytest.raises(ValueError):

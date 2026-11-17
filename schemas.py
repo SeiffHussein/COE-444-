@@ -18,6 +18,10 @@ Two plain-dict shapes are exchanged between modules:
     port                   int | None  None      TCP port, if the tool reported one
     service                str         ""        service name, if the tool reported one
     cve                    str         ""        CVE id(s), only if the tool reported them
+    cvss_score             float|None  None      official CVSS base score from NVD (nvd.py only)
+    nvd_severity           str         ""        official NVD severity, "" or one of CVSS_SEVERITIES
+    ml_cvss_estimate       str         ""        ML ESTIMATE of the CVSS severity for a CVE finding
+                                                 (model trained on real NVD data; nvd.py only)
     check_id               str         ""        tool's own id (Nuclei template, Lynis test)
     ml_priority            str         ""        "" or one of ML_PRIORITIES (ml_classifier only)
     ml_action              str         ""        "" or one of ML_ACTIONS    (ml_classifier only)
@@ -36,7 +40,7 @@ Two plain-dict shapes are exchanged between modules:
    so it can never be mistaken for a clean scan with zero findings.
 
 Rule: later stages ADD information (ml_priority, ml_action, recommendation,
-remediation_supported); they never overwrite what a scanner reported.
+remediation_supported, the NVD fields); they never overwrite what a scanner reported.
 """
 
 from __future__ import annotations
@@ -61,6 +65,9 @@ ML_ACTIONS: tuple[str, ...] = (
     "REVIEW_SERVICE", "PATCH_OR_UPDATE", "HARDEN_SSH", "HARDEN_WEB_SERVER",
     "REVIEW_TLS", "INVESTIGATE_FINDING", "NO_ACTION_INFORMATIONAL",
 )
+
+# CVSS qualitative severity ratings as published by NVD.
+CVSS_SEVERITIES: tuple[str, ...] = ("CRITICAL", "HIGH", "MEDIUM", "LOW")
 
 TOOLS: tuple[str, ...] = ("nmap", "nuclei", "nikto", "lynis")
 
@@ -131,6 +138,9 @@ class Finding:
     port: int | None = None
     service: str = ""
     cve: str = ""
+    cvss_score: float | None = None
+    nvd_severity: str = ""
+    ml_cvss_estimate: str = ""
     check_id: str = ""
     ml_priority: str = ""
     ml_action: str = ""
@@ -152,6 +162,10 @@ class Finding:
             raise ValueError(f"Invalid ml_priority {self.ml_priority!r}; use '' or one of {ML_PRIORITIES}.")
         if self.ml_action not in ("",) + ML_ACTIONS:
             raise ValueError(f"Invalid ml_action {self.ml_action!r}; use '' or one of {ML_ACTIONS}.")
+        for name in ("nvd_severity", "ml_cvss_estimate"):
+            if getattr(self, name) not in ("",) + CVSS_SEVERITIES:
+                raise ValueError(f"Invalid {name} {getattr(self, name)!r}; use '' or one of {CVSS_SEVERITIES}.")
+        self.cvss_score = _clean_score(self.cvss_score)
         for name in ("target", "source", "title"):
             if not str(getattr(self, name) or "").strip():
                 raise ValueError(f"Finding.{name} must not be empty.")
@@ -185,14 +199,27 @@ def _clean_port(value: object) -> int | None:
     return port
 
 
+def _clean_score(value: object) -> float | None:
+    """Return a CVSS base score (0.0-10.0) as float, or None for unknown."""
+    if value is None or value == "":
+        return None
+    try:
+        score = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"Finding.cvss_score must be a number 0-10 or None, got {value!r}.") from None
+    if isinstance(value, bool) or not 0.0 <= score <= 10.0:      # also rejects NaN
+        raise ValueError(f"Finding.cvss_score must be 0-10, got {value!r}.")
+    return score
+
+
 # Canonical field order (use this for CSV columns and tables).
 FINDING_FIELDS: tuple[str, ...] = (
     "id", "target", "source", "title", "severity", "original_severity",
-    "description", "evidence", "port", "service", "cve", "check_id",
+    "description", "evidence", "port", "service", "cve", "cvss_score", "nvd_severity", "ml_cvss_estimate", "check_id",
     "ml_priority", "ml_action", "recommendation", "remediation_supported", "is_sample",
 )
 TEXT_FIELDS: tuple[str, ...] = tuple(
-    name for name in FINDING_FIELDS if name not in ("port", "remediation_supported", "is_sample")
+    name for name in FINDING_FIELDS if name not in ("port", "cvss_score", "remediation_supported", "is_sample")
 )
 
 

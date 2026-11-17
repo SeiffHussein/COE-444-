@@ -15,7 +15,7 @@ from types import SimpleNamespace
 import pytest
 
 import config
-from modules import ml_classifier
+from modules import ml_classifier, nvd
 
 FIXTURES = Path(__file__).parent / "fixtures"
 LAB_HOST = "192.0.2.10"          # documentation-only address used in the fixtures
@@ -44,12 +44,18 @@ def trained_model_dir(tmp_path_factory):
     """Train both models once, into a temporary folder."""
     folder = tmp_path_factory.mktemp("models")
     original = (config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH)
+    original_nvd = (config.NVD_INDEX_PATH, config.NVD_MODEL_PATH)
     config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH = folder / "priority.joblib", folder / "action.joblib"
+    config.NVD_INDEX_PATH, config.NVD_MODEL_PATH = folder / "nvd_cves.csv.gz", folder / "nvd.joblib"
     try:
         metrics = ml_classifier.train_models()
+        # small NVD index + model built from the real 82-CVE excerpt in tests/fixtures
+        nvd_count = nvd.build_index([FIXTURES / "nvd_feed_sample.json"])
+        nvd_metrics = nvd.train_severity_model()
     finally:
         config.PRIORITY_MODEL_PATH, config.ACTION_MODEL_PATH = original
-    return SimpleNamespace(folder=folder, metrics=metrics)
+        config.NVD_INDEX_PATH, config.NVD_MODEL_PATH = original_nvd
+    return SimpleNamespace(folder=folder, metrics=metrics, nvd_count=nvd_count, nvd_metrics=nvd_metrics)
 
 
 @pytest.fixture(autouse=True)
@@ -61,3 +67,5 @@ def lab_config(monkeypatch, trained_model_dir):
     monkeypatch.setattr(config, "ALLOW_AUTO_REMEDIATION", False)
     monkeypatch.setattr(config, "PRIORITY_MODEL_PATH", trained_model_dir.folder / "priority.joblib")
     monkeypatch.setattr(config, "ACTION_MODEL_PATH", trained_model_dir.folder / "action.joblib")
+    monkeypatch.setattr(config, "NVD_INDEX_PATH", trained_model_dir.folder / "nvd_cves.csv.gz")
+    monkeypatch.setattr(config, "NVD_MODEL_PATH", trained_model_dir.folder / "nvd.joblib")

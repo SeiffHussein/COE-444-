@@ -26,6 +26,10 @@ MODELS_DIR = BASE_DIR / "models"
 SYNTHETIC_DATASET_PATH = DATA_DIR / "synthetic_findings.csv"
 PRIORITY_MODEL_PATH = MODELS_DIR / "priority_model.joblib"
 ACTION_MODEL_PATH = MODELS_DIR / "action_model.joblib"
+# NVD (National Vulnerability Database) data - see modules/nvd.py
+NVD_FEEDS_DIR = DATA_DIR / "nvd_feeds"                  # downloaded feed files (git-ignored, large)
+NVD_INDEX_PATH = DATA_DIR / "nvd_cves.csv.gz"           # compact CVE table built from the feeds
+NVD_MODEL_PATH = MODELS_DIR / "nvd_severity_model.joblib"
 # Labelled sample tool output, used by the tests AND by sample mode.
 FIXTURES_DIR = BASE_DIR / "tests" / "fixtures"
 FIXTURE_HOST = "192.0.2.10"   # documentation-only address used inside the fixtures

@@ -11,7 +11,7 @@ from modules import orchestrator, tool_utils
 
 MODULES = ["config", "schemas", "app", "demo_tests", "modules.tool_utils", "modules.target_scanner",
            "modules.vulnerability_scanner", "modules.host_auditor", "modules.ml_classifier",
-           "modules.remediation", "modules.reporting", "modules.orchestrator"]
+           "modules.remediation", "modules.reporting", "modules.orchestrator", "modules.nvd"]
 
 
 @pytest.mark.parametrize("name", MODULES)

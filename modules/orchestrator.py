@@ -1,7 +1,7 @@
 """
 modules/orchestrator.py - runs one complete assessment, start to finish.
 
-    authorize -> Nmap -> Nuclei + Nikto -> Lynis -> merge -> ML -> recommendations
+    authorize -> Nmap -> Nuclei + Nikto -> Lynis -> merge -> NVD -> ML -> recommendations
 
 app.py calls run_assessment() and only DISPLAYS the result. All scanner logic
 lives in the scanner modules.
@@ -14,6 +14,7 @@ Combined result (a plain dict):
     started_at / finished_at / duration_s
     scans          {"nmap": ScanResult, "nuclei": ..., "nikto": ..., "lynis": ...}
     findings       merged findings of all tools (with ML fields and recommendations)
+    nvd            NVD lookup status: {"status", "error", "cve_findings", "matched", "estimated"}
     ml             {"status": "SUCCESS" | "FAILED" | "SKIPPED", "error": str}
     errors         every problem as readable text (empty list = no problems)
     remediation    None, or the outcome dict of remediation.apply_fix()
@@ -27,7 +28,7 @@ import time
 import uuid
 from datetime import datetime
 
-from modules import host_auditor, ml_classifier, remediation, target_scanner, tool_utils, vulnerability_scanner
+from modules import host_auditor, ml_classifier, nvd, remediation, target_scanner, tool_utils, vulnerability_scanner
 from schemas import TOOLS, sort_by_severity
 
 DEFAULT_OPTIONS = {"run_nuclei": True, "run_nikto": True, "run_lynis": True}
@@ -52,6 +53,7 @@ def run_assessment(target: str, sample_mode: bool = True, options: dict | None =
         "started_at": started_at, "finished_at": started_at, "duration_s": 0.0,
         "scans": {},
         "findings": [],
+        "nvd": {"status": "SKIPPED", "error": "Assessment did not run.", "cve_findings": 0, "matched": 0, "estimated": 0},
         "ml": {"status": "SKIPPED", "error": "Assessment did not run."},
         "errors": [],
         "remediation": None,
@@ -95,8 +97,11 @@ def run_assessment(target: str, sample_mode: bool = True, options: dict | None =
         if scan["status"] == "FAILED":
             result["errors"].append(f"{tool}: {scan['error']}")
 
-    # ---- 5. merge -> ML -> recommendations
+    # ---- 5. merge -> NVD lookup -> ML -> recommendations
     findings = [f for scan in result["scans"].values() for f in scan["findings"]]
+    findings, result["nvd"] = nvd.enrich_findings(findings)
+    if result["nvd"]["status"] == "FAILED":
+        result["errors"].append(result["nvd"]["error"])
     findings, result["ml"] = ml_classifier.classify_findings(findings)
     if result["ml"]["status"] == "FAILED":
         result["errors"].append(result["ml"]["error"])

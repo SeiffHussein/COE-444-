@@ -1,0 +1,6254 @@
+{
+ "_fixture": "REAL excerpt of the NVD JSON 2.0 'modified' feed (public NIST data), reduced to the fields the project reads. Used by tests only.",
+ "resultsPerPage": 82,
+ "startIndex": 0,
+ "totalResults": 82,
+ "format": "NVD_CVE",
+ "version": "2.0",
+ "timestamp": "2026-11-17T01:00:05.6980014",
+ "vulnerabilities": [
+  {
+   "cve": {
+    "id": "CVE-2017-6320",
+    "published": "2017-07-18T14:29:00.293",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A remote command injection vulnerability exists in the Barracuda Load Balancer product line (confirmed on v5.4.0.004 (2015-11-26) and v6.0.1.006 (2016-08-19); fixed in 6.1.0.003 (2017-01-17)) in which an authenticated user can execute arbitrary shell commands and gain root privileges. The vulnerability stems from unsanitized data being processed in a system call when the delete_assessment command is issued."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:S/C:C/I:C/A:C",
+        "baseScore": 9.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "SINGLE",
+        "confidentialityImpact": "COMPLETE",
+        "integrityImpact": "COMPLETE",
+        "availabilityImpact": "COMPLETE"
+       },
+       "baseSeverity": "HIGH",
+       "exploitabilityScore": 8.0,
+       "impactScore": 10.0,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-78"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-20027",
+    "published": "2021-06-14T23:15:07.473",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A buffer overflow vulnerability in SonicOS allows a remote attacker to cause a Denial of Service (DoS) by sending a specially crafted request. This vulnerability affects SonicOS Gen5, Gen6, Gen7 platforms, and SonicOSv virtual firewalls."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+        "baseScore": 5.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 10.0,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-120"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-120"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-41617",
+    "published": "2021-09-26T19:15:07.263",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "sshd in OpenSSH 6.2 through 8.x before 8.8, when certain non-default configurations are used, allows privilege escalation because supplemental groups are not initialized as expected. Helper programs for AuthorizedKeysCommand and AuthorizedPrincipalsCommand may run with privileges associated with group memberships of the sshd process, if the configuration specifies running the command as a different user."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 7.0,
+        "baseSeverity": "HIGH",
+        "attackVector": "LOCAL",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 1.0,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:L/AC:M/Au:N/C:P/I:P/A:P",
+        "baseScore": 4.4,
+        "accessVector": "LOCAL",
+        "accessComplexity": "MEDIUM",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 3.4,
+       "impactScore": 6.4,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-Other"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-20031",
+    "published": "2021-10-12T23:15:07.727",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A Host Header Redirection vulnerability in SonicOS potentially allows a remote attacker to redirect firewall management users to arbitrary web domains."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:M/Au:N/C:P/I:P/A:N",
+        "baseScore": 5.8,
+        "accessVector": "NETWORK",
+        "accessComplexity": "MEDIUM",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "NONE"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 8.6,
+       "impactScore": 4.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": true
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-601"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-601"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-20046",
+    "published": "2022-01-10T14:10:16.537",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A Stack-based buffer overflow in the SonicOS HTTP Content-Length response header allows a remote authenticated attacker to cause Denial of Service (DoS) and potentially results in code execution in the firewall. This vulnerability affected SonicOS Gen 5, Gen 6 and Gen 7 firmware versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:S/C:P/I:P/A:P",
+        "baseScore": 6.5,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "SINGLE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 8.0,
+       "impactScore": 6.4,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-121"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-20048",
+    "published": "2022-01-10T14:10:16.610",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A Stack-based buffer overflow in the SonicOS SessionID HTTP response header allows a remote authenticated attacker to cause Denial of Service (DoS) and potentially results in code execution in the firewall. This vulnerability affected SonicOS Gen 5, Gen 6 and Gen 7 firmware versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:S/C:P/I:P/A:P",
+        "baseScore": 6.5,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "SINGLE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 8.0,
+       "impactScore": 6.4,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-121"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22274",
+    "published": "2022-03-25T23:15:08.353",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A Stack-based buffer overflow vulnerability in the SonicOS via HTTP request allows a remote unauthenticated attacker to cause Denial of Service (DoS) or potentially results in code execution in the firewall."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+        "baseScore": 7.5,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "HIGH",
+       "exploitabilityScore": 10.0,
+       "impactScore": 6.4,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-121"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22275",
+    "published": "2022-04-27T17:15:07.273",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Restriction of TCP Communication Channel in HTTP/S inbound traffic from WAN to DMZ bypassing security policy until TCP handshake potentially resulting in Denial of Service (DoS) attack if a target host is vulnerable."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+        "baseScore": 5.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 10.0,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-400"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22276",
+    "published": "2022-04-27T17:15:07.337",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability in SonicOS SNMP service resulting exposure of sensitive information to an unauthorized user."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+        "baseScore": 5.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 10.0,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-200"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-200"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22277",
+    "published": "2022-04-27T17:15:07.397",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability in SonicOS SNMP service resulting exposure of Wireless Access Point sensitive information in cleartext."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+        "baseScore": 5.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 10.0,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-200"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-200"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22278",
+    "published": "2022-04-27T17:15:07.453",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability in SonicOS CFS (Content filtering service) returns a large 403 forbidden HTTP response message to the source address when users try to access prohibited resource this allows an attacker to cause HTTP Denial of Service (DoS) attack"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+        "baseScore": 5.0,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "NONE",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 10.0,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-770"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-770"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2021-4189",
+    "published": "2022-08-24T16:15:09.827",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A flaw was found in Python, specifically in the FTP (File Transfer Protocol) client library in PASV (passive) mode. The issue is how the FTP client trusts the host from the PASV response by default. This flaw allows an attacker to set up a malicious FTP server that can trick FTP clients into connecting back to a given IP address and port. This vulnerability could lead to FTP client scanning ports, which otherwise would not have been possible."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-252"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-252"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4326",
+    "published": "2022-12-16T16:15:25.220",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper preservation of permissions vulnerability in Trellix Endpoint Agent (xAgent) prior to V35.31.22 on Windows allows a local user with administrator privileges to bypass the product protection to uninstall the agent via incorrectly applied permissions in the removal protection functionality.\n\n"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "trellixpsirt@trellix.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:C/C:N/I:N/A:H",
+        "baseScore": 5.5,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "LOCAL",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 1.1,
+       "impactScore": 4.0
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:H/A:H",
+        "baseScore": 6.0,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "LOCAL",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 0.8,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "trellixpsirt@trellix.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-281"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-281"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4329",
+    "published": "2023-01-02T22:15:17.060",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "The Product list Widget for Woocommerce WordPress plugin before 3.4.0 does not sanitise and escape a parameter before outputting it back in the page, leading to a Reflected Cross-Site Scripting which could be used against both unauthenticated and authenticated users (such as high privilege one like admin)."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": []
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-40692",
+    "published": "2023-02-02T21:22:38.570",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in\u00a0WP Sunshine Sunshine Photo Cart plugin <= 2.9.13 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:L",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.5
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45807",
+    "published": "2023-02-02T21:22:39.920",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) in\u00a0WPVibes WP Mail Log plugin <= 1.0.1 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:L",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.5
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-46815",
+    "published": "2023-02-02T21:22:44.577",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in\u00a0Lauri Karisola / WP Trio Conditional Shipping for WooCommerce plugin <= 2.3.1 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:L",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.5
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45088",
+    "published": "2023-02-12T04:15:16.640",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Input Validation vulnerability in Group Arge Energy and Control Systems Smartpower Web allows PHP Local File Inclusion.\n\nThis issue affects Smartpower Web: before 23.01.01."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-20"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-20"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45089",
+    "published": "2023-02-12T04:15:16.717",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Input Validation vulnerability in Group Arge Energy and Control Systems Smartpower Web allows SQL Injection.\n\nThis issue affects Smartpower Web: before 23.01.01."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45090",
+    "published": "2023-02-12T04:15:16.790",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Input Validation vulnerability in Group Arge Energy and Control Systems Smartpower Web allows SQL Injection.\n\nThis issue affects Smartpower Web: before 23.01.01."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45091",
+    "published": "2023-02-12T04:15:16.860",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Group Arge Energy and Control Systems Smartpower Web allows Cross-Site Scripting (XSS).\n\nThis issue affects Smartpower Web: before 23.01.01."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.3,
+       "impactScore": 2.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.3,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-2504",
+    "published": "2023-02-23T12:15:09.867",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') vulnerability in SDD Computer Software SDD-Baro allows SQL Injection.\n\nThis issue affects SDD-Baro: before 2.8.432."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45068",
+    "published": "2023-03-01T14:15:16.197",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in Mercado Pago Mercado Pago payments for WooCommerce plugin <=\u00a06.3.1."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+        "baseScore": 4.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45804",
+    "published": "2023-03-01T14:15:16.293",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in RoboSoft Photo Gallery, Images, Slider in Rbs Image Gallery plugin <=\u00a03.2.9 leading to\u00a0galleries hierarchy\u00a0change, included plugin\u00a0deactivate & activate."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+        "baseScore": 4.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:L",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.5
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-0656",
+    "published": "2023-03-02T22:15:09.487",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A Stack-based buffer overflow vulnerability in the SonicOS allows a remote unauthenticated attacker to cause Denial of Service (DoS), which could cause an impacted firewall to crash."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-121"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-1101",
+    "published": "2023-03-02T22:15:09.560",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "SonicOS SSLVPN improper restriction of excessive MFA attempts vulnerability allows an authenticated attacker to use excessive MFA codes."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "PSIRT@sonicwall.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-307"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-307"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-307"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-3760",
+    "published": "2023-03-07T09:15:08.623",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') vulnerability in Mia Technology Mia-Med.\n\nThis issue affects Mia-Med: before 1.0.0.58."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-31474",
+    "published": "2023-03-13T14:15:12.507",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') vulnerability in iThemes BackupBuddy allows Path Traversal.This issue affects BackupBuddy: from 8.5.8.0 through 8.7.4.1."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-22"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-38074",
+    "published": "2023-03-13T14:15:12.627",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "SQL Injection vulnerability in VeronaLabs WP Statistics plugin\u00a0<= 13.2.10 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:L",
+        "baseScore": 7.1,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 4.2
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-23790",
+    "published": "2023-03-14T09:15:12.663",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Firmanet Software and Technology Customer Relation Manager allows Cross-Site Scripting (XSS).\n\nThis issue affects Customer Relation Manager: before 2022.03.13."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-23791",
+    "published": "2023-03-14T09:15:12.773",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Firmanet Software and Technology Customer Relation Manager allows Cross-Site Scripting (XSS).\n\nThis issue affects Customer Relation Manager: before 2022.03.13."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "iletisim@usom.gov.tr",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "iletisim@usom.gov.tr",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-28531",
+    "published": "2023-03-17T04:15:14.553",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "ssh-add in OpenSSH before 9.3 adds smartcard keys to ssh-agent without the intended per-hop destination constraints. The earliest affected version is 8.9."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-284"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-1497",
+    "published": "2023-03-19T19:15:20.130",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability was found in SourceCodester Simple and Nice Shopping Cart Script 1.0. It has been rated as critical. This issue affects some unknown processing of the file uploaderm.php. The manipulation of the argument submit leads to unrestricted upload. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used. The identifier VDB-223397 was assigned to this vulnerability."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:L/Au:S/C:P/I:P/A:P",
+        "baseScore": 6.5,
+        "accessVector": "NETWORK",
+        "accessComplexity": "LOW",
+        "authentication": "SINGLE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "PARTIAL",
+        "availabilityImpact": "PARTIAL"
+       },
+       "baseSeverity": "MEDIUM",
+       "exploitabilityScore": 8.0,
+       "impactScore": 6.4,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "cna@vuldb.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-434"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-47605",
+    "published": "2023-04-12T15:15:11.580",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Auth. SQL Injection') vulnerability in Kunal Nagar Custom 404 Pro plugin <=\u00a03.7.0 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:L",
+        "baseScore": 6.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 0.9,
+       "impactScore": 5.5
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 7.2,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-43480",
+    "published": "2023-04-16T09:15:08.313",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Auth. (admin+) Stored Cross-Site Scripting (XSS) vulnerability in Magneticlab S\u00e0rl Homepage Pop-up plugin <=\u00a01.2.5 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 4.8,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.7,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45839",
+    "published": "2023-04-18T13:15:09.117",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Auth. (contributor+) Stored Cross-Site Scripting (XSS) vulnerability in WHA WHA Puzzle plugin <=\u00a01.0.9 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 5.4,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.3,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45836",
+    "published": "2023-04-18T14:15:07.317",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Unauth. Reflected Cross-Site Scripting (XSS) vulnerability in W3 Eden, Inc. Download Manager plugin <=\u00a03.2.59 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45084",
+    "published": "2023-04-24T15:15:07.627",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Unauth. Reflected Cross-Site Scripting (XSS) vulnerability in Softaculous Loginizer plugin <=\u00a01.7.5 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 6.1,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-47436",
+    "published": "2023-05-10T11:15:10.307",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in MantraBrain Yatra allows Stored XSS.This issue affects Yatra: from n/a through 2.1.14."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:L",
+        "baseScore": 5.9,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.7,
+       "impactScore": 3.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 4.8,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.7,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-45079",
+    "published": "2023-05-22T10:15:11.203",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in Softaculous Loginizer plugin <=\u00a01.7.5 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:L/A:N",
+        "baseScore": 4.7,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-47180",
+    "published": "2023-05-24T16:15:09.607",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Cross-Site Request Forgery (CSRF) vulnerability in Kopa Theme Kopa Framework plugin <=\u00a01.3.5 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L",
+        "baseScore": 4.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-352"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-47593",
+    "published": "2023-06-22T13:15:09.490",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Auth. (subscriber+) SQL Injection (SQLi) vulnerability in RapidLoad RapidLoad Power-Up for Autoptimize plugin <=\u00a01.6.35 versions."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:L",
+        "baseScore": 8.5,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 3.1,
+       "impactScore": 4.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+        "baseScore": 6.5,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.6
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-22302",
+    "published": "2023-07-11T09:15:09.073",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A clear text storage of sensitive information (CWE-312) vulnerability in both FortiGate version 6.4.0 through 6.4.1, 6.2.0 through 6.2.9 and 6.0.0 through 6.0.13 and FortiAuthenticator version 5.5.0 and all versions of 6.1 and 6.0 may allow a local unauthorized party to retrieve the Fortinet private keys used to establish secure communication with both Apple Push Notification and Google Cloud Messaging services, via accessing the files on the filesystem."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "psirt@fortinet.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 5.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.3,
+        "baseSeverity": "LOW",
+        "attackVector": "LOCAL",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.8,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@fortinet.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-312"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-312"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-46651",
+    "published": "2023-07-12T10:15:09.623",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Apache Airflow, versions before 2.6.3, is affected by a vulnerability that allows an unauthorized actor to gain access to sensitive information in Connection edit view. This vulnerability is considered low since it requires someone with access to Connection resources specifically updating the connection to exploit it. Users should upgrade to version 2.6.3 or later which has removed the vulnerability.\n"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+        "baseScore": 6.5,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.6
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "security@apache.org",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-200"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4146",
+    "published": "2023-07-18T03:15:55.067",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Expression Language Injection vulnerability in Hitachi Replication Manager on Windows, Linux, Solaris allows Code Injection.This issue affects Hitachi Replication Manager: before 8.8.5-02.\n\n"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "hirt@hitachi.co.jp",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+        "baseScore": 7.3,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "hirt@hitachi.co.jp",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-917"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-917"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-47421",
+    "published": "2023-07-18T15:15:11.363",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Auth. (admin+) Stored Cross-Site Scripting (XSS) vulnerability in Repute InfoSystems ARMember (free), Repute InfoSystems ARMember (premium) plugins."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "audit@patchstack.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:L",
+        "baseScore": 5.9,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.7,
+       "impactScore": 3.7
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N",
+        "baseScore": 4.8,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.7,
+       "impactScore": 2.7
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "audit@patchstack.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-79"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4908",
+    "published": "2023-07-29T00:15:10.917",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Inappropriate implementation in iFrame Sandbox in Google Chrome prior to 107.0.5304.62 allowed a remote attacker to leak cross-origin data via a crafted HTML page. (Chromium security severity: Medium)"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+        "baseScore": 4.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4909",
+    "published": "2023-07-29T00:15:10.970",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Inappropriate implementation in XML in Google Chrome prior to 107.0.5304.62 allowed a remote attacker to potentially perform an ASLR bypass via a crafted HTML page. (Chromium security severity: Low)"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 3.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4920",
+    "published": "2023-07-29T00:15:11.573",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Heap buffer overflow in Blink in Google Chrome prior to 101.0.4951.41 allowed a remote attacker who convinced a user to engage in specific UI gestures to potentially perform a sandbox escape via a crafted HTML page. (Chromium security severity: High)"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "baseScore": 9.6,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 6.0
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "baseScore": 9.6,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 6.0
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4923",
+    "published": "2023-07-29T00:15:11.733",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Inappropriate implementation in Omnibox in Google Chrome prior to 99.0.4844.51 allowed an attacker in a privileged network position to perform a man-in-the-middle attack via malicious network traffic. (Chromium security severity: Low)"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:N",
+        "baseScore": 3.1,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 0.5,
+       "impactScore": 2.5
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2022-4924",
+    "published": "2023-07-29T00:15:11.787",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Use after free in WebRTC in Google Chrome prior to 97.0.4692.71 allowed a remote attacker who had compromised the renderer process to potentially perform a sandbox escape via a crafted HTML page. (Chromium security severity: High)"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "baseScore": 9.6,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 6.0
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-416"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-38186",
+    "published": "2023-08-08T18:15:23.140",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Windows Mobile Device Management Elevation of Privilege Vulnerability"
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "secure@microsoft.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 8.8,
+        "baseSeverity": "HIGH",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.8,
+       "impactScore": 5.9
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "secure@microsoft.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-306"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-35085",
+    "published": "2023-08-10T19:15:09.730",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "An integer overflow vulnerability in all UniFi Access Points and Switches, excluding the Switch Flex Mini, with SNMP Monitoring and default settings enabled could allow a Remote Code Execution (RCE).\n\n \n\nAffected Products:\nAll UniFi Access Points (Version 6.5.50 and earlier)\nAll UniFi Switches (Version 6.5.32 and earlier) \n-USW Flex Mini excluded.\n \n\nMitigation:\nUpdate UniFi Access Points to Version 6.5.62 or later.\nUpdate the UniFi Switches to Version 6.5.59 or later."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV30": [
+      {
+       "source": "support@hackerone.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.0",
+        "vectorString": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H",
+        "baseScore": 9.0,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 6.0
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-190"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-38034",
+    "published": "2023-08-10T19:15:09.803",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A command injection vulnerability in the DHCP Client function of all UniFi Access Points and Switches, excluding the Switch Flex Mini, could allow a Remote Code Execution (RCE).\n\n \nAffected Products:\nAll UniFi Access Points (Version 6.5.53 and earlier)\nAll UniFi Switches (Version 6.5.32 and earlier) \n-USW Flex Mini excluded.\n \n\nMitigation:\nUpdate UniFi Access Points to Version 6.5.62 or later.\nUpdate UniFi Switches to Version 6.5.59 or later."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ],
+     "cvssMetricV30": [
+      {
+       "source": "support@hackerone.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.0",
+        "vectorString": "CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H",
+        "baseScore": 8.3,
+        "baseSeverity": "HIGH",
+        "attackVector": "ADJACENT_NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "CHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 1.6,
+       "impactScore": 6.0
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-77"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39405",
+    "published": "2023-08-13T12:15:46.467",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Vulnerability of out-of-bounds parameter read/write in the Wi-Fi module. Successful exploitation of this vulnerability may cause other apps to be executed with escalated privileges."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "baseScore": 9.8,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "HIGH"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.9
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-20"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-787"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39385",
+    "published": "2023-08-13T13:15:10.333",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Vulnerability of configuration defects in the media module of certain products.. Successful exploitation of this vulnerability may cause unauthorized access."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-16"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39398",
+    "published": "2023-08-13T13:15:11.933",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-275"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39399",
+    "published": "2023-08-13T13:15:12.157",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-275"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39400",
+    "published": "2023-08-13T13:15:12.467",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-22"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39401",
+    "published": "2023-08-13T13:15:12.757",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-22"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39402",
+    "published": "2023-08-13T13:15:13.020",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-22"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2023-39403",
+    "published": "2023-08-13T13:15:13.197",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Parameter verification vulnerability in the installd module. Successful exploitation of this vulnerability may cause sandbox files to be read and written without authorization."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "baseScore": 9.1,
+        "baseSeverity": "CRITICAL",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@huawei.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-358"
+       }
+      ]
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "NVD-CWE-noinfo"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-285"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-24515",
+    "published": "2026-01-23T08:16:01.490",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "In libexpat before 2.7.4, XML_ExternalEntityParserCreate does not copy unknown encoding handler user data."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "cve@mitre.org",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 2.9,
+        "baseSeverity": "LOW",
+        "attackVector": "LOCAL",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.4,
+       "impactScore": 1.4
+      },
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 2.5,
+        "baseSeverity": "LOW",
+        "attackVector": "LOCAL",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.0,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "cve@mitre.org",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-476"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-36946",
+    "published": "2026-04-13T14:16:13.883",
+    "vulnStatus": "Modified",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Sourcecodester Computer and Mobile Repair Shop Management System v1.0 is vulnerable to SQL injection in the file /rsms/admin/inquiries/view_details.php."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     },
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-36947",
+    "published": "2026-04-13T14:16:14.007",
+    "vulnStatus": "Analyzed",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Sourcecodester Computer and Mobile Repair Shop Management System v1.0 is vulnerable to SQL Injection in the file /rsms/admin/services/view_service.php."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-89"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-40264",
+    "published": "2026-04-21T01:16:06.917",
+    "vulnStatus": "Analyzed",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "OpenBao is an open source identity-based secrets management system. OpenBao's namespaces provide multi-tenant separation. Prior to version 2.5.3, a tenant who leaks token accessors can have their token revoked or renewed by a privileged administrator in another tenant. This is addressed in v2.5.3."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "security-advisories@github.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:L/AT:P/PR:H/UI:P/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.0,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "PASSIVE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "LOW",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "security-advisories@github.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-1259"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-121625",
+    "published": "2026-11-03T18:17:58.440",
+    "vulnStatus": "Awaiting Analysis",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "GNU Gatekeeper (gnugk) before 5.16 contains an out-of-bounds read vulnerability in ParseRTCP() in ProxyChannel.cxx that allows remote RTP peers to read heap memory past received packets. Attackers can send RTCP SDES items lacking a NUL byte to the media proxy port during proxied H.323 calls with EnableRTCPStats enabled, crashing the gatekeeper."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "LOW",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-125"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-123206",
+    "published": "2026-11-05T19:17:20.043",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "EdgeChat before 2.20.3 contains a missing authentication vulnerability in the GET /files/:key route that allows unauthenticated or banned users to download decrypted public-channel attachments because canAccessFile() accepts a null user id. Attackers holding an attachment object key can omit or supply an invalid token to retrieve plaintext attachments without a session or channel membership."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-306"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-119238",
+    "published": "2026-11-11T17:17:17.057",
+    "vulnStatus": "Awaiting Analysis",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A potential improper permissions vulnerability was reported in Lenovo XiangBangbang that could allow a local application to perform unauthorized touch gestures."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "psirt@lenovo.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 4.8,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "LOCAL",
+        "attackComplexity": "LOW",
+        "attackRequirements": "NONE",
+        "privilegesRequired": "NONE",
+        "userInteraction": "PASSIVE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "LOW",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "psirt@lenovo.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+        "baseScore": 3.3,
+        "baseSeverity": "LOW",
+        "attackVector": "LOCAL",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "NONE",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.8,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "psirt@lenovo.com",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-926"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126328",
+    "published": "2026-11-11T22:17:26.950",
+    "vulnStatus": "Analyzed",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Insertion of sensitive information into sent data in the user endpoints in Devolutions Server 2026.3.13.0 and earlier allows an authenticated user with delegated user-viewing permissions to obtain users' MFA shared secrets via the user API responses."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "security@devolutions.net",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-312"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126331",
+    "published": "2026-11-11T22:17:27.090",
+    "vulnStatus": "Analyzed",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Insertion of sensitive information into sent data in the user list endpoint in Devolutions Server 2026.3.13.0 and earlier allows an authenticated user with delegated user-viewing permissions to obtain users' API key secret hashes via the user list API response."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV31": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "security@devolutions.net",
+      "type": "Secondary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-201"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-127274",
+    "published": "2026-11-13T00:20:13.870",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability was found in Linksys EA8100 1.0.3.216940. This vulnerability affects unknown code of the file /jnap/core/CheckAdminPassword. The manipulation results in improper restriction of excessive authentication attempts. The attack may be performed from remote. The attack requires a high level of complexity. It is stated that the exploitability is difficult. The exploit has been made public and could be used. The vendor was contacted early about this disclosure but did not respond in any way."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:P/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.9,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "NONE",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "PROOF_OF_CONCEPT",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:H/Au:N/C:P/I:N/A:N",
+        "baseScore": 2.6,
+        "accessVector": "NETWORK",
+        "accessComplexity": "HIGH",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "baseSeverity": "LOW",
+       "exploitabilityScore": 4.9,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "cna@vuldb.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-307"
+       },
+       {
+        "lang": "en",
+        "value": "CWE-799"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-127276",
+    "published": "2026-11-13T02:18:54.317",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "A vulnerability was identified in Linksys EA8100 1.0.3.216940. Impacted is an unknown function of the component Web UI. Such manipulation leads to cookie without 'httponly' flag. It is possible to launch the attack remotely. This attack is characterized by high complexity. The exploitability is considered difficult. The exploit is publicly available and might be used. The vendor was contacted early about this disclosure but did not respond in any way."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:P/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.9,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "NONE",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "PROOF_OF_CONCEPT",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ],
+     "cvssMetricV2": [
+      {
+       "source": "cna@vuldb.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "2.0",
+        "vectorString": "AV:N/AC:H/Au:N/C:P/I:N/A:N",
+        "baseScore": 2.6,
+        "accessVector": "NETWORK",
+        "accessComplexity": "HIGH",
+        "authentication": "NONE",
+        "confidentialityImpact": "PARTIAL",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "baseSeverity": "LOW",
+       "exploitabilityScore": 4.9,
+       "impactScore": 2.9,
+       "acInsufInfo": false,
+       "obtainAllPrivilege": false,
+       "obtainUserPrivilege": false,
+       "obtainOtherPrivilege": false,
+       "userInteractionRequired": false
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "cna@vuldb.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-732"
+       },
+       {
+        "lang": "en",
+        "value": "CWE-1004"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126284",
+    "published": "2026-11-13T10:17:31.987",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "NocoDB from 2026.05.2 before 2026.07.0 contains a server-side request forgery vulnerability that allows Editor-role users to fetch internal URLs because data import reused the webhook internal-network exemption. When NC_ALLOW_LOCAL_HOOKS or NC_WEBHOOK_ALLOW_PRIVATE_NETWORK is set, attackers can request internal services via URLs ending in CSV or spreadsheet extensions and read the responses."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.3,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.1,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 1.6,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-918"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126316",
+    "published": "2026-11-13T10:17:37.597",
+    "vulnStatus": "Received",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Frappe HRMS from 16.0.0 before 16.20.1 contains an information exposure vulnerability that places the subscription key in the query string of outbound subscription status requests. Attackers with access to proxy, server, or monitoring logs along the request path can recover the site's subscription key from recorded URLs."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:L/AT:P/PR:H/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.1,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 2.2,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 0.7,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-598"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126390",
+    "published": "2026-11-13T10:17:42.650",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "n8n before 1.123.89 contains a credential leakage vulnerability in the NocoDB node that sends the configured NocoDB API token to attacker-chosen hosts when downloading attachments. Attackers with write access to a NocoDB attachment cell can insert a URL to their host, capturing the API token when the workflow executes with Download Attachments enabled."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "LOW",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "LOW",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "LOW",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-522"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126406",
+    "published": "2026-11-13T10:17:45.440",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "The wasmtime-wasi-http p2 implementation in Wasmtime before 36.0.20, 37.0.0 before 48.0.8, 49.0.0 before 49.0.5, and 50.0.0 before 50.0.1 can send conflicting content-length headers, or ones not matching the body, in outgoing requests. A guest that reuses a received response's headers resource to send a bodyless request can enable request smuggling against non-compliant servers, potentially bypassing embedder destination access controls."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "LOW",
+        "vulnAvailabilityImpact": "NONE",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "LOW",
+        "availabilityImpact": "NONE"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-444"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-126409",
+    "published": "2026-11-13T10:17:46.013",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Wasmtime 47.0.0 before 48.0.8, 49.0.0 before 49.0.5, and 50.0.0 before 50.0.1 contains a cross-engine type confusion vulnerability because StructType::with_finality_and_supertype does not validate that the supplied supertype belongs to the same Engine. Embedders using multiple engines that create a GC struct type with another engine's supertype can trigger runtime panics or GC heap corruption, causing denial of service; guest WebAssembly cannot trigger it."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:H/UI:A/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 1.8,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "ACTIVE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "LOW",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:R/S:U/C:N/I:N/A:L",
+        "baseScore": 2.0,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "HIGH",
+        "userInteraction": "REQUIRED",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 0.5,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-843"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-127087",
+    "published": "2026-11-13T10:18:05.310",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Ryot before 10.5.6 contains an authorization bypass vulnerability that allows authenticated users to revoke other users' access links by supplying an arbitrary accessLinkId. Attackers can obtain access link ids from public share URLs and revoke them without ownership checks, breaking shared access for all link users."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:L/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 2.3,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "LOW",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 3.1,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "LOW",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 1.6,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-639"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2026-128018",
+    "published": "2026-11-13T10:18:07.137",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "FrankenPHP before 1.13.4 contains a denial of service vulnerability in worker mode where frankenphp_handle_request() returns false without finishing the dequeued request after a fatal error during request startup. Attackers who trigger startup fatal errors against worker scripts that keep calling frankenphp_handle_request() can leave client requests hanging indefinitely while the worker continues running."
+     }
+    ],
+    "metrics": {
+     "cvssMetricV40": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Secondary",
+       "cvssData": {
+        "version": "4.0",
+        "vectorString": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+        "baseScore": 6.3,
+        "baseSeverity": "MEDIUM",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "attackRequirements": "PRESENT",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "vulnConfidentialityImpact": "NONE",
+        "vulnIntegrityImpact": "NONE",
+        "vulnAvailabilityImpact": "LOW",
+        "subConfidentialityImpact": "NONE",
+        "subIntegrityImpact": "NONE",
+        "subAvailabilityImpact": "NONE",
+        "exploitMaturity": "NOT_DEFINED",
+        "confidentialityRequirement": "NOT_DEFINED",
+        "integrityRequirement": "NOT_DEFINED",
+        "availabilityRequirement": "NOT_DEFINED",
+        "modifiedAttackVector": "NOT_DEFINED",
+        "modifiedAttackComplexity": "NOT_DEFINED",
+        "modifiedAttackRequirements": "NOT_DEFINED",
+        "modifiedPrivilegesRequired": "NOT_DEFINED",
+        "modifiedUserInteraction": "NOT_DEFINED",
+        "modifiedVulnConfidentialityImpact": "NOT_DEFINED",
+        "modifiedVulnIntegrityImpact": "NOT_DEFINED",
+        "modifiedVulnAvailabilityImpact": "NOT_DEFINED",
+        "modifiedSubConfidentialityImpact": "NOT_DEFINED",
+        "modifiedSubIntegrityImpact": "NOT_DEFINED",
+        "modifiedSubAvailabilityImpact": "NOT_DEFINED",
+        "Safety": "NOT_DEFINED",
+        "Automatable": "NOT_DEFINED",
+        "Recovery": "NOT_DEFINED",
+        "valueDensity": "NOT_DEFINED",
+        "vulnerabilityResponseEffort": "NOT_DEFINED",
+        "providerUrgency": "NOT_DEFINED"
+       }
+      }
+     ],
+     "cvssMetricV31": [
+      {
+       "source": "disclosure@vulncheck.com",
+       "type": "Primary",
+       "cvssData": {
+        "version": "3.1",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+        "baseScore": 3.7,
+        "baseSeverity": "LOW",
+        "attackVector": "NETWORK",
+        "attackComplexity": "HIGH",
+        "privilegesRequired": "NONE",
+        "userInteraction": "NONE",
+        "scope": "UNCHANGED",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "availabilityImpact": "LOW"
+       },
+       "exploitabilityScore": 2.2,
+       "impactScore": 1.4
+      }
+     ]
+    },
+    "weaknesses": [
+     {
+      "source": "disclosure@vulncheck.com",
+      "type": "Primary",
+      "description": [
+       {
+        "lang": "en",
+        "value": "CWE-404"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2000-0744",
+    "published": "2000-10-20T04:00:00.000",
+    "vulnStatus": "Rejected",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "Rejected reason: DO NOT USE THIS CANDIDATE NUMBER. ConsultIDs: CVE-2000-0743. Reason: This candidate is a duplicate of CVE-2000-0743. Notes: All CVE users should reference CVE-2000-0743 instead of this candidate. All references and descriptions in this candidate have been removed to prevent accidental usage"
+     }
+    ],
+    "metrics": {},
+    "weaknesses": []
+   }
+  },
+  {
+   "cve": {
+    "id": "CVE-2025-39980",
+    "published": "2025-10-15T08:15:35.887",
+    "vulnStatus": "Deferred",
+    "descriptions": [
+     {
+      "lang": "en",
+      "value": "In the Linux kernel, the following vulnerability has been resolved:\n\nnexthop: Forbid FDB status change while nexthop is in a group\n\nThe kernel forbids the creation of non-FDB nexthop groups with FDB\nnexthops:\n\n # ip nexthop add id 1 via 192.0.2.1 fdb\n # ip nexthop add id 2 group 1\n Error: Non FDB nexthop group cannot have fdb nexthops.\n\nAnd vice versa:\n\n # ip nexthop add id 3 via 192.0.2.2 dev dummy1\n # ip nexthop add id 4 group 3 fdb\n Error: FDB nexthop group can only have fdb nexthops.\n\nHowever, as long as no routes are pointing to a non-FDB nexthop group,\nthe kernel allows changing the type of a nexthop from FDB to non-FDB and\nvice versa:\n\n # ip nexthop add id 5 via 192.0.2.2 dev dummy1\n # ip nexthop add id 6 group 5\n # ip nexthop replace id 5 via 192.0.2.2 fdb\n # echo $?\n 0\n\nThis configuration is invalid and can result in a NPD [1] since FDB\nnexthops are not associated with a nexthop device:\n\n # ip route add 198.51.100.1/32 nhid 6\n # ping 198.51.100.1\n\nFix by preventing nexthop FDB status change while the nexthop is in a\ngroup:\n\n # ip nexthop add id 7 via 192.0.2.2 dev dummy1\n # ip nexthop add id 8 group 7\n # ip nexthop replace id 7 via 192.0.2.2 fdb\n Error: Cannot change nexthop FDB status while in a group.\n\n[1]\nBUG: kernel NULL pointer dereference, address: 00000000000003c0\n[...]\nOops: Oops: 0000 [#1] SMP\nCPU: 6 UID: 0 PID: 367 Comm: ping Not tainted 6.17.0-rc6-virtme-gb65678cacc03 #1 PREEMPT(voluntary)\nHardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-4.fc41 04/01/2014\nRIP: 0010:fib_lookup_good_nhc+0x1e/0x80\n[...]\nCall Trace:\n <TASK>\n fib_table_lookup+0x541/0x650\n ip_route_output_key_hash_rcu+0x2ea/0x970\n ip_route_output_key_hash+0x55/0x80\n __ip4_datagram_connect+0x250/0x330\n udp_connect+0x2b/0x60\n __sys_connect+0x9c/0xd0\n __x64_sys_connect+0x18/0x20\n do_syscall_64+0xa4/0x2a0\n entry_SYSCALL_64_after_hwframe+0x4b/0x53"
+     }
+    ],
+    "metrics": {},
+    "weaknesses": []
+   }
+  }
+ ]
+}

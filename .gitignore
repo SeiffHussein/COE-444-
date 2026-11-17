@@ -33,3 +33,6 @@ id_rsa*
 id_ed25519*
 coe444_vm*
 .env
+
+# Downloaded NVD feed files (large; the compact index data/nvd_cves.csv.gz IS committed)
+data/nvd_feeds/

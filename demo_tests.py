@@ -19,8 +19,9 @@ from types import SimpleNamespace
 from unittest import mock
 
 import config
-from modules import (host_auditor, ml_classifier, orchestrator, remediation, reporting,
+from modules import (host_auditor, ml_classifier, nvd, orchestrator, remediation, reporting,
                      target_scanner, tool_utils, vulnerability_scanner)
+from schemas import new_finding
 
 LAB_HOST = config.FIXTURE_HOST
 
@@ -204,6 +205,21 @@ def t17():
     return f"simulated={outcome['simulated']}, applied={outcome['applied']}, commands sent to VM={len(vm.commands)}"
 
 
+def t18():
+    known = new_finding(LAB_HOST, "nuclei", "SonicOS buffer overflow", cve="CVE-2022-22274", severity="Critical")
+    unknown = new_finding(LAB_HOST, "nuclei", "Apache path traversal", cve="CVE-2021-41773", severity="Critical")
+    (known, unknown), status = nvd.enrich_findings([known, unknown])
+    return f"known CVE -> {known['cvss_score']} {known['nvd_severity']}, CVE not in index -> " \
+           f"{unknown['cvss_score']} '{unknown['nvd_severity']}', found {status['matched']} of {status['cve_findings']}"
+
+
+def t19():
+    port = new_finding(LAB_HOST, "nmap", "Open port 22/tcp (ssh)", port=22, service="ssh")
+    cve = new_finding(LAB_HOST, "nuclei", "Apache path traversal", cve="CVE-2021-41773", severity="Critical")
+    (port, cve), _ = nvd.enrich_findings([port, cve])
+    return f"open port estimate='{port['ml_cvss_estimate']}', CVE finding has estimate={bool(cve['ml_cvss_estimate'])}"
+
+
 SCENARIOS = [
     ("T01", "Unauthorized target 8.8.8.8 is rejected before scanning", "authorized=False, findings=0, tools started=0", t01),
     ("T02", "Target text with tool options / shell characters", "format ok=False", t02),
@@ -225,6 +241,10 @@ SCENARIOS = [
     ("T15", "sshd -t fails -> drop-in removed, no reload", "applied=False, verified=False, file written=False, reloaded=False", t15),
     ("T16", "Approved fix on simulated VM -> applied and verified", "applied=True, verified=True, file written=True, reloaded=True", t16),
     ("T17", "Simulation mode sends nothing to the VM", "simulated=True, applied=False, commands sent to VM=0", t17),
+    ("T18", "NVD lookup: official CVSS for a known CVE, nothing invented for an unknown one",
+     "known CVE -> 9.8 CRITICAL, CVE not in index -> None '', found 1 of 2", t18),
+    ("T19", "NVD-trained model is applied to CVE findings only",
+     "open port estimate='', CVE finding has estimate=True", t19),
 ]
 
 
@@ -235,8 +255,12 @@ def main() -> int:
          mock.patch.object(config, "SSH_USER", "demo-user"), \
          mock.patch.object(config, "PRIORITY_MODEL_PATH", Path(model_folder) / "priority.joblib"), \
          mock.patch.object(config, "ACTION_MODEL_PATH", Path(model_folder) / "action.joblib"), \
+         mock.patch.object(config, "NVD_INDEX_PATH", Path(model_folder) / "nvd_cves.csv.gz"), \
+         mock.patch.object(config, "NVD_MODEL_PATH", Path(model_folder) / "nvd.joblib"), \
          mock.patch("subprocess.run", side_effect=AssertionError("demo must not run real programs")):
         ml_classifier.train_models()
+        nvd.build_index([config.FIXTURES_DIR / "nvd_feed_sample.json"])    # real 82-CVE excerpt of the NVD feed
+        nvd.train_severity_model()
         rows = []
         for test_id, scenario, expected, run in SCENARIOS:
             try:

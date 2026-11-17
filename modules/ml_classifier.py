@@ -225,6 +225,22 @@ def load_dataset() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
 
 
 # ---------------------------------------------------------------- training
+def evaluate_predictions(y_true, predicted, labels: tuple[str, ...], train_rows: int) -> dict:
+    """Accuracy, macro precision/recall/F1 and confusion matrix for one model."""
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        y_true, predicted, labels=list(labels), average="macro", zero_division=0)
+    return {
+        "accuracy": round(float(accuracy_score(y_true, predicted)), 4),
+        "precision_macro": round(float(precision), 4),
+        "recall_macro": round(float(recall), 4),
+        "f1_macro": round(float(f1), 4),
+        "labels": list(labels),
+        "confusion_matrix": confusion_matrix(y_true, predicted, labels=list(labels)).tolist(),
+        "train_rows": int(train_rows),
+        "test_rows": int(len(y_true)),
+    }
+
+
 def _train_one(X: pd.DataFrame, y: pd.Series, labels: tuple[str, ...], model_path: Path) -> dict:
     """Train, evaluate, save and reload one RandomForest. Returns its metrics."""
     X_train, X_test, y_train, y_test = train_test_split(
@@ -232,19 +248,7 @@ def _train_one(X: pd.DataFrame, y: pd.Series, labels: tuple[str, ...], model_pat
     model = RandomForestClassifier(n_estimators=100, max_depth=8, random_state=config.RANDOM_SEED)
     model.fit(X_train, y_train)
 
-    predicted = model.predict(X_test)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        y_test, predicted, labels=list(labels), average="macro", zero_division=0)
-    metrics = {
-        "accuracy": round(float(accuracy_score(y_test, predicted)), 4),
-        "precision_macro": round(float(precision), 4),
-        "recall_macro": round(float(recall), 4),
-        "f1_macro": round(float(f1), 4),
-        "labels": list(labels),
-        "confusion_matrix": confusion_matrix(y_test, predicted, labels=list(labels)).tolist(),
-        "train_rows": len(X_train),
-        "test_rows": len(X_test),
-    }
+    metrics = evaluate_predictions(y_test, model.predict(X_test), labels, len(X_train))
 
     model_path = Path(model_path)
     model_path.parent.mkdir(parents=True, exist_ok=True)

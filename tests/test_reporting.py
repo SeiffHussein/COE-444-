@@ -55,6 +55,9 @@ def test_html_report_content(result, tmp_path):
     assert "Original severity" in page and "Normalized severity" in page
     assert "(none given by tool)" in page                               # Nmap/Nikto give no severity
     assert "CVE-2021-41773" in page and "SSH-7408" in page
+    assert "<td>NVD lookup</td>" in page and "0 of 1 CVE finding(s) found in the NVD index, 1 estimated" in page
+    assert "(CVE not in the local NVD index)" in page and "ML CVSS estimate" in page
+    assert page.count("NVD CVSS (official)") == 1                       # shown only for the CVE finding
     assert "Remediation outcome" not in page                            # nothing was attempted
 
 
@@ -109,3 +112,13 @@ def test_report_write_failure_raises_runtime_error(result, tmp_path):
     for generate in (reporting.generate_csv_report, reporting.generate_html_report):
         with pytest.raises(RuntimeError):
             generate(result, str(blocker / "sub" / "report.out"))
+
+
+def test_html_report_shows_official_nvd_score(result, tmp_path):
+    finding = next(f for f in result["findings"] if f["cve"])
+    finding.update(cvss_score=9.8, nvd_severity="CRITICAL", ml_cvss_estimate="HIGH")
+    page = read(reporting.generate_html_report(result, str(tmp_path / "r.html")))
+    assert "<td>9.8 CRITICAL</td><th>ML CVSS estimate</th><td>HIGH</td>" in page
+    with open(reporting.generate_csv_report(result, str(tmp_path / "r.csv")), newline="", encoding="utf-8") as fh:
+        row = next(r for r in csv.DictReader(fh) if r["cve"])
+    assert row["cvss_score"] == "9.8" and row["nvd_severity"] == "CRITICAL" and row["ml_cvss_estimate"] == "HIGH"

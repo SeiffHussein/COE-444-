@@ -11,7 +11,7 @@ from tests.conftest import LAB_HOST, completed, fixture_text
 from tests.test_contract import assert_finding
 
 RESULT_KEYS = {"scan_id", "target", "is_sample", "authorized", "started_at", "finished_at", "duration_s",
-               "scans", "findings", "ml", "errors", "remediation"}
+               "scans", "findings", "nvd", "ml", "errors", "remediation"}
 
 
 def fake_lab(monkeypatch, nmap="nmap_scan.xml", broken=()):
@@ -56,6 +56,8 @@ def test_sample_assessment_end_to_end(monkeypatch):
         schemas.validate_scan_result(scan)
     assert len(result["findings"]) == 3 + 4 + 4 + 7 == sum(len(s["findings"]) for s in result["scans"].values())
     assert result["ml"] == {"status": "SUCCESS", "error": ""}
+    # the one CVE finding (CVE-2021-41773) is not in the test index: no official score, only an estimate
+    assert result["nvd"] == {"status": "SUCCESS", "error": "", "cve_findings": 1, "matched": 0, "estimated": 1}
     for f in result["findings"]:
         assert_finding(f)
         assert f["is_sample"] and f["ml_priority"] and f["ml_action"] and f["recommendation"]
@@ -143,3 +145,13 @@ def test_missing_model_keeps_findings_and_reports_ml_error(monkeypatch, tmp_path
     assert result["ml"]["status"] == "FAILED" and any("ML unavailable" in e for e in result["errors"])
     assert len(result["findings"]) == 18
     assert all(f["ml_priority"] == "" and f["ml_action"] == "" and f["recommendation"] for f in result["findings"])
+
+
+def test_missing_nvd_data_keeps_findings_and_reports_error(monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "NVD_INDEX_PATH", tmp_path / "missing.csv.gz")
+    monkeypatch.setattr(config, "NVD_MODEL_PATH", tmp_path / "missing.joblib")
+    result = orchestrator.run_assessment("127.0.0.1", sample_mode=True)
+    assert result["nvd"]["status"] == "FAILED" and result["nvd"]["matched"] == result["nvd"]["estimated"] == 0
+    assert any("NVD lookup unavailable" in e and "NVD severity model unavailable" in e for e in result["errors"])
+    assert len(result["findings"]) == 18 and result["ml"]["status"] == "SUCCESS"
+    assert all(f["cvss_score"] is None and f["nvd_severity"] == "" and f["ml_cvss_estimate"] == "" for f in result["findings"])
