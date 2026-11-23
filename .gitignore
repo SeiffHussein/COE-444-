@@ -36,3 +36,6 @@ coe444_vm*
 
 # Downloaded NVD feed files (large; the compact index data/nvd_cves.csv.gz IS committed)
 data/nvd_feeds/
+
+# Final report drafts (kept out of the repo)
+docs/
